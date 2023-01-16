@@ -8,27 +8,14 @@ const darkMode = StyleSheet.create({
         flexDirection:'column',
         alignItems:'center',
         height:'100%',
-       backgroundColor:'#262626',
-       marginTop:50
+       backgroundColor:'#212121',
+      
         
     },
-    Login__LogoContainer:{
-
-        marginTop:-140,
-    },
-    Login__Logo:{
-        resizeMode:'contain',
-        width:300
-        
-    },
-    Login__Form:{
-        display:'flex',
-        flexDirection:'column',
-        alignItems:'center',
-        
-    },
+   
+  
     LoginForm__Text:{
-        marginTop:-130,
+     
         fontFamily:'Arial',
         fontSize:25,
         fontWeight:'800',
@@ -36,40 +23,22 @@ const darkMode = StyleSheet.create({
         
     },
     Login__Inputs:{
-        backgroundColor:'#E8E8E8',
+        backgroundColor:'#323232',
         width:290,
         marginTop:20,
         height:50,
         paddingLeft:20,
+        color:'white',
         borderRadius:3
     },
 
-    Login__Button:{
-        width:290,
-        backgroundColor:'#FF914D',
-        alignItems:'center',
-        padding:10,
-        margin:30,
-        borderRadius:3
-    },
-    Login__ButtonLogin:{
-        color:'#FFFFFF',
-    },
-    Login__RegisterSection:{
-        display:'flex',
-        flexDirection:'row',
-        color:'#FFFFFF'
-        
-    },
+   
+    
+  
     Login__Registertext:{
         color:'#FFFFFF'
     },
-    Login__SignUp:{
-        color:'#FF914D'
-    },
-    Login__ChangeMode:{
-        bottom:-200,
-    },
+   
     Slider__bg:{
         backgroundColor:'#000000',
         height:25,
