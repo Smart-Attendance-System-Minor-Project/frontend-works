@@ -1,0 +1,22 @@
+{
+    "BCT":
+        {
+            "1/1":[
+                "Engineering Mathematics I",
+                "Computer Programming",
+                "Engineering Drawing I",
+                " Engineering Physics",
+                " Applied Mechanics",
+                "Basic Electrical Engineering"
+            ],
+            "1/2":[
+               " Engineering Mathematics II",
+                "Engineering Drawing II",
+                "Basic Electronics Engineering",
+                "Engineering Chemistry",
+                "Fundamental of Thermodynamics & Heat Transfer",
+                "Workshop Technology"
+            ]
+        }
+    
+}

@@ -1,10 +1,14 @@
-import {StyleSheet, View, Text, NativeModules } from 'react-native'
+import {StyleSheet, View, Text,Appearance } from 'react-native'
 
 import { SwipeablePanel } from 'rn-swipeable-panel';
 import React,{useState,useEffect} from 'react'
 import { TouchableOpacity } from 'react-native';
 
 const History_panel = () => {
+    const [theme,setTheme] = useState(Appearance.getColorScheme());
+    Appearance.addChangeListener((scheme)=>{
+     setTheme(scheme.colorScheme); 
+   })
 
    
     
@@ -42,7 +46,7 @@ const History_panel = () => {
                     noBackgroundOpacity = {true}
                     allowTouchOutside = {true}
                     showCloseButton = {false}
-                    
+                    style = {[theme==='light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]}
                     barStyle = {{backgroundColor:'#29B0DB'}}
                     >
                        

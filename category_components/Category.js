@@ -1,22 +1,43 @@
-import { View, Text,StyleSheet } from 'react-native'
+import { View, Text,StyleSheet,Appearance,AsyncStorage } from 'react-native'
 import React,{useState} from 'react'
+import {useDispatch} from 'react-redux'
+import { reset } from '../redux/reducers/authSlice'
 import { TouchableOpacity } from 'react-native'
-import {openPanel,closePanel} from './History_panel';
-import { SwipeablePanel } from 'rn-swipeable-panel';
-const Category = ({icon,label,numbers,action}) => {
 
-    const handleClick = ()=>{
-        if(action == "ViewRecords")
-        {
-            
-        
-        }
+
+const Category = ({icon,label,numbers,action,navigation}) => {
+
+  const [theme,setTheme] = useState(Appearance.getColorScheme());
+  Appearance.addChangeListener((scheme)=>{
+   setTheme(scheme.colorScheme); 
+ })
+
+    const dispatch = useDispatch()
+
+    const handleClick = async()=>{
+       switch (action) {
+        case 'TAKE_ATTENDANCE':
+          navigation.navigate('Choose Class');
+          break;
+
+        case 'ADD_CLASS':
+          navigation.navigate('Add Class');
+          break;
+
+        case 'LOG_OUT':
+          AsyncStorage.removeItem('token')
+          dispatch(reset());
+          navigation.navigate('Login')
+       
+        default:
+          break;
+       }
     }
     
   return (
     <View style = {styles.category_container}>
-      <TouchableOpacity style = {styles.category_buttons} onPress = {handleClick}>
-        <Text style = {styles.category__title}>{label}</Text>
+      <TouchableOpacity style = {[styles.category_buttons,theme=== 'light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]} onPress = {handleClick}>
+        <Text style = {[styles.category__title,theme=== 'light'?{color:'#000'}:{color:'#fff'}]}>{label}</Text>
         {numbers &&  <View style = {styles.category__numbers}>
           <Text>{numbers}</Text>
         </View>}
@@ -30,7 +51,7 @@ const Category = ({icon,label,numbers,action}) => {
 
 const styles = StyleSheet.create({
     category_container:{
-        backgroundColor:'FFFFFF',
+       
         marginLeft:20,
         marginRight:20,
         marginTop:20,

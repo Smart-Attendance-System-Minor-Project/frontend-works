@@ -1,45 +1,73 @@
-import { View, Text,StyleSheet,Image, Appearance, TextInput, TouchableOpacity } from 'react-native'
+import { View, Text,StyleSheet,Image, ActivityIndicator, TextInput, TouchableOpacity } from 'react-native'
 import {React,useEffect, useState} from 'react';
-import { useSelector } from 'react-redux';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import darkMode from '../styles/darkMode';
 import Register from './Register';
-
+import axios from 'axios';
+import {login,reset} from '../redux/reducers/authSlice';
+import {useSelector,useDispatch} from 'react-redux';
 
 const Login = ({navigation,theme}) => {
-
  
-    
+  
+    const dispatch = useDispatch()
 
+    const {isLoading, isError, isSuccess, message} = useSelector(
+    (state) => state.auth)
+    
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
     const [errorUsername,setErrorUsername] = useState('');
     const [errorPassword,setErrorPassword] = useState('');
 
-    
-    const handleLogin = ()=>
-    {
-        if (!username && !password)
+   
+    useEffect(()=>{
+      
+        async function checkStatus()
         {
-            setErrorPassword("Invalid Password!");
-            setErrorUsername("Invalid Username!");
+            const user = await AsyncStorage.getItem('token');
+         
+            if(await AsyncStorage.getItem('errorUsername'))
+            {
+                setErrorUsername(await AsyncStorage.getItem('errorUsername'))
+            }
+            if(await AsyncStorage.getItem('errorPassword'))
+            {
+                setErrorPassword(await AsyncStorage.getItem('errorPassword'))
+            }
+
+            if(user || isSuccess) {
+               
+                navigation.navigate('Home')
+              }
+              
+              dispatch(reset())
+        
+        }
+        
+      
+      checkStatus()
+    
+    },[isLoading, isError,isSuccess,message,dispatch])
+    
+    const handleLogin =()=>
+    {
+        const data = {
+            username:username,
+            password:password
         }
 
-        if(username != 'rajesh') setErrorUsername('Invalid Username!');
-        if(password != "rajesh123") setErrorPassword('Invalid Password!');
-
-        else if(username === 'rajesh' && password === 'rajesh123')
-        {
-            navigation.navigate('Home');
-            setErrorPassword("");
-            setErrorUsername("");
+        try {
+           
+            dispatch(login(data));
+        } catch (error) {
+            console.log(error.response);   
         }
     }
-   
+
 
  
-    useEffect(()=>{
-          
-     },[theme,username,password]);
+   
 
     return (
     <View style = {theme === 'light'?styles.Login__Container:darkMode.Login__Container}>
@@ -47,6 +75,7 @@ const Login = ({navigation,theme}) => {
       <View style = {styles.Login__LogoContainer}>
          <Image source={theme === 'light'?require('../pictures/Logos/LOGO_WA_BGT_LIGHT.png'):require('../pictures/Logos/LOGO_WA_BGT_DARK.png')} style = {styles.Login__Logo} /> 
       </View>
+      {isLoading && <ActivityIndicator size="large" color="#29b0db" />}
 
       <View style = {styles.Login__Form}>
         

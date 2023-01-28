@@ -11,7 +11,7 @@ const HomeScreen = ({navigation,theme}) => {
   const [year,setyear] = useState('');
 
  
-
+  
 
   useEffect(()=>{
     const currDate = new Date();
@@ -24,9 +24,17 @@ const HomeScreen = ({navigation,theme}) => {
     <View style= {theme === 'light'?styles.HomeScreen__Container:darkModeHS.HomeScreen__Container}>
        <WeekCalendar theme = {theme}/>
        <Text style = {theme === 'light'?styles.HomeScreen__Category:darkModeHS.HomeScreen__Category}>CATEGORIES</Text>
-       <Category label = {'Take Attendance'} numbers = {7}/>
-       <Category label = {'Add Classes'} numbers = {10}/>
-       <Category label = {'Download Records'}/>
+       <Category label = {'Take Attendance'} numbers = {7} 
+       navigation = {navigation} 
+       action = 'TAKE_ATTENDANCE'
+       />
+       <Category label = {'Add Classes'} numbers = {10}
+        navigation = {navigation}
+        action = 'ADD_CLASS'
+        />
+       <Category label = {'Download Records'} navigation = {navigation}
+       action='LOG_OUT'
+       />
        <History_panel/>
     </View>
   )
