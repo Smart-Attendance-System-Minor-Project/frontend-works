@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {AsyncStorage} from 'react-native';
+
 
 const addClass = async(classInfo)=>{
     var Subjects = [];

@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 
 import axios from 'axios';
@@ -12,6 +13,17 @@ const initialState = {
     isLoading: false,
     
 }
+
+export const getStudent = createAsyncThunk('addClass/getStudent',async (parameters,thunkAPI)=>{
+    try {
+        return JSON.parse(await AsyncStorage.getItem(`${parameters}`));
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) 
+        || error.message || error.toString()
+      
+        return thunkAPI.rejectWithValue(message)
+    }
+})
 
 
 export const fetchStudent = createAsyncThunk('addClass/fetchStudent',async (parameters,thunkAPI)=>{
@@ -32,7 +44,7 @@ export const fetchStudent = createAsyncThunk('addClass/fetchStudent',async (para
         const studentData1 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params1)).data;
         const studentData2 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params2)).data;
         
-        console.log(params1,params2);
+      
   
         let Student_Info = [];
         studentData1.map(student=>{
@@ -47,7 +59,10 @@ export const fetchStudent = createAsyncThunk('addClass/fetchStudent',async (para
             let studentID = studentName + " - " + rollNo;
             Student_Info.push(studentID);
         })
+        AsyncStorage.setItem(`${parameters[1]}${parameters[0]}${parameters[2]}`,JSON.stringify(Student_Info));
+   
         return Student_Info;
+
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) 
         || error.message || error.toString()
@@ -91,7 +106,20 @@ export const authSlice = createSlice({
             state.isError = true
 
            
-        });
+        })
+        .addCase(getStudent.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            
+            
+            state.students = action.payload
+        })
+        .addCase(getStudent.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = false
+            state.isError = true
+        })
+        ;
 
     }
 })

@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import authService from './authService';
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 //get user from localStorage
 
 
@@ -11,8 +11,20 @@ const initialState = {
     isError:false,
     isSuccess: false,
     isLoading: false,
-    message: ''
+    message: '',
+    user: ''
 }
+
+export const userData = createAsyncThunk('auth/user',async (user,thunkAPI)=>{
+    try {
+        return user
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) 
+        || error.message || error.toString()
+      
+        return thunkAPI.rejectWithValue(message)
+    }
+})
 
 //Register user
 export const register = createAsyncThunk('auth/register',async (user,thunkAPI)=>{
@@ -55,6 +67,8 @@ export const authSlice = createSlice({
             state.isError = false
             state.isSuccess = false
             state.message = ''
+            AsyncStorage.removeItem('errorUsername')
+            AsyncStorage.removeItem('errorPassword')
            
            
         }
@@ -76,8 +90,27 @@ export const authSlice = createSlice({
             state.isError = true
             state.message = action.payload
            
-        });
-
+        })
+        .addCase(register.pending,(state)=>{
+            state.isLoading = true
+        })
+        .addCase(register.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+           
+        })
+        .addCase(register.rejected,(state,action) => {
+            state.isLoading = false
+            state.isSuccess = false
+            state.isError = true
+            state.message = action.payload
+           
+        })
+        .addCase(userData.fulfilled,(state,action)=>{
+            state.user = action.payload
+        })
+       
+     
     }
 })
 

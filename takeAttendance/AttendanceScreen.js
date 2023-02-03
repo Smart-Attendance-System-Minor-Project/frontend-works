@@ -10,6 +10,7 @@ const AttendanceScreen = ({navigation}) => {
     const [classN,setClassN] = useState('');
 
  
+    
 
     const {students} = useSelector(state=>state.fetchStudent)
     useEffect(()=>{
@@ -17,24 +18,12 @@ const AttendanceScreen = ({navigation}) => {
       {
      
           
-          let className = await AsyncStorage.getItem('Classroom');
-          let classType = await AsyncStorage.getItem('Classroom_Type');
-          let classGroup = await AsyncStorage.getItem('Group');
+          let className = await AsyncStorage.getItem('class_');
+  
 
-          setClassN(className);
-         
-          className = className.split('- ')[1];
-          let batch = '';
-          let program ='';
-          for (var i=0;i<3;i++)
-          {
-            batch += className[i];
-            program += className[i+3];
-          }
-          
      
-          
-         
+          setClassN(className);
+ 
       }
       getStudentsForAttendance();
       
@@ -48,8 +37,8 @@ const AttendanceScreen = ({navigation}) => {
                 <Text style = {{textAlign:'center'}}>{classN}</Text>
             </View>
             <View style = {styles.AttendanceScreen__Infos}>
-                <Text>Jan 20, 2023</Text>
-                <Text>{count} out of 48</Text>
+                <Text>JAN 29, 2023</Text>
+                <Text>{count} out of {students.length}</Text>
             </View>
 
             <View style = {{position:'relative',zIndex:1,
@@ -62,6 +51,48 @@ const AttendanceScreen = ({navigation}) => {
                  onSwipedAll={() => {console.log('onSwipedAll')}}
                  cardIndex={0}
                  backgroundColor={'#4FD0E9'}
+                
+                 overlayLabels = {{
+                  left: {
+                  /* Optional */
+                  title: 'ABSENT',
+                    style: {
+                      label:{
+                          color:'#FF9191',
+                          fontSize:20,
+                          borderWidth:1,
+                          borderColor:'#FF9191'
+                      },
+                      wrapper: {
+                        flexDirection: 'column',
+                        alignItems: 'flex-end',
+                        justifyContent: 'flex-start',
+                        marginTop: 30,
+                        marginLeft:-130,
+                        
+                      }
+                    }
+                  },
+                  right: {
+                 /* Optional */
+                  title: 'PRESENT',
+                    style: { label:{
+                      color:'#9DFC7C',
+                      fontSize:20,
+                      borderWidth:1,
+                      borderColor:'#9DFC7C'
+                       },
+                      wrapper: {
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        justifyContent: 'flex-start',
+                        marginTop: 30,
+                        marginLeft: 30
+                      }
+                    }
+                  },
+                 }}
+                
                  stackSize= {3}
                  disableBottomSwipe = {true}
                  disableTopSwipe = {true}
@@ -69,8 +100,8 @@ const AttendanceScreen = ({navigation}) => {
                   <View  style = {styles.AttendanceScreen__Swipes}>
                       <View style = {styles.AttendanceSwipe__Photo}></View>
                       <View style = {styles.AttendanceSwipe__Information}>
-                        <Text>{card.split(' - ')[0]}</Text>
-                        <Text>{card.split(' - ')[1]}</Text>
+                        <Text style = {{fontSize:17}}>{card.split(' - ')[0]}</Text>
+                        <Text style={{color:'#29b0db',fontSize:16}}>{card.split(' - ')[1]}</Text>
                         
                       </View>
                   </View>

@@ -3,73 +3,72 @@ import React,{useState,useEffect} from 'react'
 import darkModeRegister from '../styles/darkModeRegister';
 import {register,reset} from '../redux/reducers/authSlice';
 import { useDispatch,useSelector } from 'react-redux';
+
 const Register = ({navigation}) => {
 
-  const [theme,setTheme] = useState(Appearance.getColorScheme());
-  Appearance.addChangeListener((scheme)=>{
-   setTheme(scheme.colorScheme); 
- })
+    const [username,setUsername] = useState('');
+    const [password,setPassword] = useState('');
+    const [confirmPassword,setConfirmPassword] = useState('');
+    const [email,setEmail] = useState('');
+    const [fullName,setFullName] = useState('');
+    const [error,setError] = useState([]);
 
- const {isLoading, isError, isSuccess, message} = useSelector(
-    (state) => state.auth)
+    const [theme,setTheme] = useState(Appearance.getColorScheme());
+    Appearance.addChangeListener((scheme)=>{
+    setTheme(scheme.colorScheme); 
+    })
 
- const dispatch = useDispatch();
+    const {isLoading, isError, isSuccess, message} = useSelector(
+        (state) => state.auth)
 
- useEffect(()=>{
-    async function checkRegister()
-    {
-    
+     const dispatch = useDispatch();
+     const items = {};
+
+   
+
+    useEffect(()=>{
+   
 
         if(isSuccess) {
            
+          
             navigation.navigate('Home')
           }
           
           dispatch(reset())
     
-    }
-    
-  
-  checkRegister()
 
-},[isLoading, isError,isSuccess,message,dispatch])
 
-  const [username,setUsername] = useState('');
-  const [password,setPassword] = useState('');
-  const [confirmPassword,setConfirmPassword] = useState('');
-  const [email,setEmail] = useState('');
-  const [fullName,setFullName] = useState('');
-  const [error,setError] = useState([]);
+    },[isLoading, isError,isSuccess,message,dispatch])
+
 
   
-  const handleRegister = ()=>
-  {
+     const handleRegister = ()=>
+     {
    
     
-    const data = {
-        username:username,
-        password:password,
-        confirm_password:confirmPassword,
-        email:email,
-        full_name:fullName
-    }
+        const data = {
+            username:username,
+            password:password,
+            confirm_password:confirmPassword,
+            email:email,
+            full_name:fullName
+        }
 
-    console.log(data);
-    try {
-       
-        dispatch(register(data));
-    } catch (error) {
-        console.log(error.response);   
-    }
    
+        try {
+        
+            dispatch(register(data));
+        } catch (error) {
+            console.log(error.response);   
+        }
+    
      
   }
  
 
 
-  useEffect(()=>{
-        
-   },[theme,username,password]);
+  
   return (
     <View style = {theme === 'light'?styles.Register__Container:darkModeRegister.Register__Container}>
        <View style = {styles.Register__LogoContainer}>

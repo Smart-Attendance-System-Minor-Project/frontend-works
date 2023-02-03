@@ -1,8 +1,8 @@
 import axios from 'axios';
-import {AsyncStorage} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const register = async(userData)=>{
-    console.log(userData);
+  
     const response = await axios.post("https://prat051.pythonanywhere.com/attendance/register/",userData);
 
     if(response.data)

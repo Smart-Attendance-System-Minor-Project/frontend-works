@@ -2,14 +2,14 @@ import { View, Text,StyleSheet,Image, ActivityIndicator, TextInput, TouchableOpa
 import {React,useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import darkMode from '../styles/darkMode';
-import Register from './Register';
-import axios from 'axios';
-import {login,reset} from '../redux/reducers/authSlice';
+import {login,reset,userData} from '../redux/reducers/authSlice';
 import {useSelector,useDispatch} from 'react-redux';
+import { version } from 'react';
+
 
 const Login = ({navigation,theme}) => {
  
-  
+   
     const dispatch = useDispatch()
 
     const {isLoading, isError, isSuccess, message} = useSelector(
@@ -20,11 +20,13 @@ const Login = ({navigation,theme}) => {
     const [errorUsername,setErrorUsername] = useState('');
     const [errorPassword,setErrorPassword] = useState('');
 
+            
    
     useEffect(()=>{
       
         async function checkStatus()
         {
+           
             const user = await AsyncStorage.getItem('token');
          
             if(await AsyncStorage.getItem('errorUsername'))
@@ -38,12 +40,12 @@ const Login = ({navigation,theme}) => {
 
             if(user || isSuccess) {
                
-                navigation.navigate('Home')
-              }
-              
+              dispatch(userData(username))
+              navigation.navigate('Home')
               dispatch(reset())
         
         }
+    }
         
       
       checkStatus()
@@ -60,6 +62,8 @@ const Login = ({navigation,theme}) => {
         try {
            
             dispatch(login(data));
+         
+            
         } catch (error) {
             console.log(error.response);   
         }
@@ -114,6 +118,7 @@ const Login = ({navigation,theme}) => {
         <TouchableOpacity onPress = {()=>{navigation.navigate('Register')}}><Text style = {styles.Login__SignUp}>Sign up</Text></TouchableOpacity>
 
       </View>
+    
    
       <View style = {styles.Login__ChangeMode}>
             

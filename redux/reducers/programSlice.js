@@ -50,7 +50,7 @@ export const authSlice = createSlice({
         .addCase(addProgram.fulfilled,(state,action)=>{
             state.isLoading = false
             state.isSuccess = true
-            state.program += action.payload
+            state.program = action.payload
            
            
         })

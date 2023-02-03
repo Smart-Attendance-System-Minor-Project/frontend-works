@@ -1,6 +1,6 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import addClassService from './addClassService';
-import {AsyncStorage} from 'react-native';
+
 
 
 
@@ -18,7 +18,7 @@ const initialState = {
 
 export const addClass = createAsyncThunk('addClass/addClass',async (classInfo,thunkAPI)=>{
    
-        
+       
         const responseFromAPI = await addClassService.addClass(classInfo);
         if(!responseFromAPI)
         {

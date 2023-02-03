@@ -14,6 +14,9 @@ import ChooseClass from './takeAttendance/ChooseClass';
 import ChooseSubject from './addClasses/ChooseSubject';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+var Datastore = require('react-native-local-mongodb');
+import { useSelector } from 'react-redux';
 import AddClass from './addClasses/AddClass';
 import AttendanceScreen from './takeAttendance/AttendanceScreen';
 import {
@@ -22,45 +25,56 @@ import {
   StatusBar,
   StyleSheet,
   Text,
-  Button,
   useColorScheme,
   Appearance,
+  Image,
   View,
+  Button,
+  TouchableOpacity
 } from 'react-native';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+
 
 import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ForgotPassword from './components/ForgotPassword';
-import Ionicons from '@expo/vector-icons/Ionicons';
 import FetchStudents from './addClasses/FetchStudents';
+import { useEffect } from 'react';
 
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
  * LTI update could not be added via codemod */
 const Stack = createNativeStackNavigator();
 
+
 const App = () => {
 
- 
 
+  
   const [theme,setTheme] = useState(Appearance.getColorScheme());
   Appearance.addChangeListener((scheme)=>{
    setTheme(scheme.colorScheme); 
  })
 
 
+
+ useEffect(()=>{
+  
+ },[])
+
+ 
+
+ 
+
+
   return (
   
     <Provider store={store}>
+      
+      
       <NavigationContainer>
       <Stack.Navigator initialRouteName = 'Login' 
+     
+
       
       >
         <Stack.Screen name = "Login" options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}> 
@@ -100,8 +114,26 @@ const App = () => {
 
 
         <Stack.Screen name = "Home" options = {{headerStyle:{backgroundColor:'#29B0DB'},
-       title:'',
-        
+       title:'Home',
+       headerBackVisible:false,
+       gestureEnabled:false,
+       left:null,
+        headerLeft: ()=>(
+          <Button
+          onPress={()=>alert("You pressed it")}
+          title = {`prat051`}
+          color = '#fff'
+          
+          ></Button>
+        ),
+        headerRight:()=>(
+          <TouchableOpacity>
+            <Image source = {require('./pictures/icons_images/more_options.png')} style = {{resizeMode:'contain',height:20}}/>
+          </TouchableOpacity>
+            
+          
+         
+        ),
         headerTintColor: '#fff'}}>
         {(props) => <HomeScreen {...props} theme = {theme}/>} 
         </Stack.Screen>

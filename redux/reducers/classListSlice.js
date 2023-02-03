@@ -34,6 +34,7 @@ export const authSlice = createSlice({
             state.isLoading = false
             state.isError = false
             state.isSuccess = false
+           
           
             
            
@@ -50,7 +51,7 @@ export const authSlice = createSlice({
         .addCase(classList.fulfilled,(state,action)=>{
             state.isLoading = false
             state.isSuccess = true
-            state.className.push(action.payload)
+            state.className = action.payload
            
            
         })

@@ -1,16 +1,20 @@
 import { View, Text,StyleSheet,TouchableOpacity,Image } from 'react-native'
 import React,{useState} from 'react'
 import { useDispatch,useSelector } from 'react-redux'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import ModalSelector from 'react-native-modal-selector'
 import SelectDropdown from 'react-native-select-dropdown'
 import {classList,reset} from '../redux/reducers/classListSlice'
 import { fetchStudent } from '../redux/reducers/fetchStudentSlice'
+var Datastore = require('react-native-local-mongodb');
+
 
 const ChooseSubject = ({navigation}) => {
 
+
   const batchList = ['075','076','077','078'];
   
- 
+  
   const [batch,setBatch] = useState('');
   const [section,setSection] = useState('');
   const [subSelected,setSubSelected] = useState('');
@@ -20,7 +24,7 @@ const ChooseSubject = ({navigation}) => {
   const {subjects} = useSelector((state)=>state.addClass)
   const {program} = useSelector(state=>state.addProgram)
   const {isSuccess,isLoading,isError} = useSelector(state=>state.classList)
-
+  const {students} = useSelector(state=>state.fetchStudent)
   const dispatch = useDispatch();
 
   React.useEffect(()=>{
@@ -28,24 +32,20 @@ const ChooseSubject = ({navigation}) => {
       if(isSuccess && batch)
       {
       
-                  let parameters = [program,batch,section];
-
-             
-        
-
+                
                   try {
-
-                  
+                    
+                  var parameters = [program,batch,section];
+                  console.log(`${parameters[1]}${parameters[0]}${parameters[2]}`)
                   dispatch(fetchStudent(parameters));
+
                   navigation.navigate('Fetch Students');
                   
                   } catch (error) {
                     console.log(error)
                     
                   }
-              
-            
-              
+
       }
 
     
@@ -61,7 +61,20 @@ const ChooseSubject = ({navigation}) => {
 
     try {
       
-      dispatch(classList(classPrefix))
+
+      var updatedClasses = [];
+      var PresentClasses = JSON.parse(await AsyncStorage.getItem('classList'));
+      if(PresentClasses)
+      {
+        for(var i=0;i<PresentClasses.length;i++){
+          updatedClasses.push(PresentClasses[i]);
+        }
+      }
+     
+
+      updatedClasses.push(classPrefix);
+      AsyncStorage.setItem('classList',JSON.stringify(updatedClasses));      
+      dispatch(classList(updatedClasses));
       dispatch(reset())
      
      

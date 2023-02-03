@@ -1,23 +1,35 @@
 import { View, Text,StyleSheet, TextInput,TouchableOpacity } from 'react-native'
 import React,{useState,useEffect} from 'react'
 import ModalSelector from 'react-native-modal-selector'
-import {AsyncStorage} from '@react-native-async-storage/async-storage';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
+import ClassAdded from './ClassAdded';
 
 const ChooseClass = ({navigation}) => {
     let index = 0;
 
-    const [class_,setClass_] = useState('');
+    const [class_,setClass_] = useState([]);
     const [classType_,setClassTypes] = useState('');
-    const [group,setGroup] = useState('');
 
+    const [group,setGroup] = useState('');
     const {className} = useSelector(state=>state.classList)
 
-    const data = [];
+    useEffect(()=>{
+        async function getClasses()
+        {
+          setClass_(JSON.parse(await AsyncStorage.getItem('classList')));
+        
+          
+        }
+        getClasses()
+    },[])
+    
+   
 
-    for(var i=0;i<className.length;i++)
+    var data = [];
+    for(var i=0;i<class_.length;i++)
     {
-        data.push({key:i,label:className[i]})
+        data.push(class_[i])
     }
 
     const classType = [
@@ -34,7 +46,7 @@ const ChooseClass = ({navigation}) => {
       
     ]
 
-    const handleClassForAttendance = ()=>{
+    const handleClassForAttendance = async()=>{
 
         
         navigation.navigate('Attendance Screen');
@@ -42,47 +54,25 @@ const ChooseClass = ({navigation}) => {
   return (
     <View style = {styles.ClassSelection__Container}>
         <View style = {styles.ClassSelection__Section1}>
-            <ModalSelector
-                            data={data}
-                            initValue="Select Class"
-                            style = {{margin:10}}
-                            initValueTextStyle = {{color:'#7E7E7E'}}
-                            cancelStyle = {{padding:15}}
-                            optionStyle = {{padding:15}}
-                            selectedItemTextStyle = {{padding:15}}
-                            selectStyle = {{padding:25}}
-                            onChange = {(option)=>{setClass_(option.label)}}
-                            />
+            {
+                data.map(data=>{
+                    return(
+                        <ClassAdded
+                        className={data}
+                        classType = 'L'
+                        navigation={navigation}
+                        />
+                    )
+                   
+                })
+            }
 
-            <ModalSelector
-                            data={classType}
-                            initValue="Select Class Type"
-                            style = {{margin:10}}
-                            initValueTextStyle = {{color:'#7E7E7E'}}
-                            cancelStyle = {{padding:15}}
-                            optionStyle = {{padding:15}}
-                            selectStyle = {{padding:25}}
-                            onChange = {(option)=>{setClassTypes(option.label)}}
-                            />
-            <ModalSelector
-                            data={Group}
-                            initValue="Select Group"
-                            style = {{margin:10}}
-                            initValueTextStyle = {{color:'#7E7E7E'}}
-                            cancelStyle = {{padding:15}}
-                            optionStyle = {{padding:15}}
-                            selectStyle = {{padding:25}}
-                            onChange = {(option)=>{setGroup(option.label)}}
-                            />
+        
         </View>
       
 
         <View style = {styles.ClassSelection__Buttons}>
-            <TouchableOpacity style = {styles.ClassSelection__Button1}
-            onPress = {handleClassForAttendance}
-            >
-                <Text style = {{color:'white'}}>Take Attendance</Text>
-            </TouchableOpacity>
+           
             <TouchableOpacity style = {styles.ClassSelection__Button2}>
                 <Text>Cancel</Text>
             </TouchableOpacity>
@@ -101,13 +91,14 @@ const ChooseClass = ({navigation}) => {
 const styles = StyleSheet.create({
     ClassSelection__Container:{
         padding:20,
-        marginTop:30
+        marginTop:30,
+        height:'100%'
     },
    ClassSelection__Buttons:{
     display:'flex',
     flexDirection:'column',
     alignItems:'center',
-    marginTop:'30%'
+    top:'50%'
    },
    ClassSelection__Button1:{
     backgroundColor:'#29B0DB',
@@ -130,7 +121,7 @@ const styles = StyleSheet.create({
     height:60,
     padding:15,
     width:'95%',
-    marginTop:20,
+    bottom:0,
     borderRadius:9,
     alignItems:'center',
     justifyContent:'center',

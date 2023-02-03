@@ -1,11 +1,12 @@
-import { View, Text,StyleSheet,Appearance,AsyncStorage } from 'react-native'
+import { View, Text,StyleSheet,Appearance} from 'react-native'
 import React,{useState} from 'react'
 import {useDispatch} from 'react-redux'
 import { reset } from '../redux/reducers/authSlice'
 import { TouchableOpacity } from 'react-native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
-const Category = ({icon,label,numbers,action,navigation}) => {
+const Category = ({icon,label,numbers,action,navigation,disabled}) => {
 
   const [theme,setTheme] = useState(Appearance.getColorScheme());
   Appearance.addChangeListener((scheme)=>{
@@ -35,8 +36,8 @@ const Category = ({icon,label,numbers,action,navigation}) => {
     }
     
   return (
-    <View style = {styles.category_container}>
-      <TouchableOpacity style = {[styles.category_buttons,theme=== 'light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]} onPress = {handleClick}>
+    <View style = {[styles.category_container]}>
+      <TouchableOpacity  style = {[styles.category_buttons,theme=== 'light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]} onPress = {handleClick}>
         <Text style = {[styles.category__title,theme=== 'light'?{color:'#000'}:{color:'#fff'}]}>{label}</Text>
         {numbers &&  <View style = {styles.category__numbers}>
           <Text>{numbers}</Text>
@@ -59,6 +60,9 @@ const styles = StyleSheet.create({
         color:'black',
     
         
+    },
+    disabled:{
+      opacity:0.4
     },
     category_buttons:{
         width:'100%',
