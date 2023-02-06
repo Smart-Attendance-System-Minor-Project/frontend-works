@@ -1,12 +1,13 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import addClassService from './addClassService';
 
+import axios from 'axios';
 
 
 
 const initialState = {
   
-    className:[],
+    students:[],
     isError:false,
     isSuccess: false,
     isLoading: false,
@@ -14,54 +15,47 @@ const initialState = {
 }
 
 
-export const classList = createAsyncThunk('class_/classItem',async (classData,thunkAPI)=>{
-   
+export const getStudent = createAsyncThunk('addClass/uploadStudent', (studentData,thunkAPI)=>{
+    try {
         
-     if (classData)
-     {
-        return classData;
-     }
-     else return null;
-       
-    
+        return studentData;
+    } catch (error) {
+        const message = (error.response && error.response.data && error.response.data.message) 
+        || error.message || error.toString()
+        return thunkAPI.rejectWithValue(message)
+    }
 })
 
+
 export const authSlice = createSlice({
-    name:'classList',
-    initialState,   
+    name:'getStudent',
+    initialState,
     reducers:{
         reset: (state) => {
             state.isLoading = false
             state.isError = false
             state.isSuccess = false
-           
-          
-            
-           
-      
-           
+   
         }
     },
     extraReducers:(builder)=>{
 
         builder
-        .addCase(classList.pending,(state) => {
+        .addCase(getStudent.pending,(state) => {
             state.isLoading = true
         })
-        .addCase(classList.fulfilled,(state,action)=>{
+        .addCase(getStudent.fulfilled,(state,action)=>{
             state.isLoading = false
             state.isSuccess = true
-            state.className = action.payload
-           
+            state.students = action.payload
            
         })
-        .addCase(classList.rejected,(state,action) => {
+        .addCase(getStudent.rejected,(state,action) => {
             state.isLoading = false
             state.isSuccess = false
             state.isError = true
-
-           
-        });
+ 
+        })
 
     }
 })

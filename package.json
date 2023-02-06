@@ -24,7 +24,7 @@
     "date-fns": "^2.29.3",
     "expo": "^47.0.12",
     "expo-asset": "~8.7.0",
-    "expo-file-system": "~15.1.1",
+    "expo-file-system": "^15.1.1",
     "expo-sqlite": "~11.0.0",
     "react": "18.1.0",
     "react-dom": "18.1.0",

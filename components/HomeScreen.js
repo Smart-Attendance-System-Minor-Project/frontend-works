@@ -5,7 +5,9 @@ import * as SQLite from 'expo-sqlite'
 import WeekCalendar from './Calender';
 import Category from '../category_components/Category';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { version } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { userData } from '../redux/reducers/authSlice';
+import * as FileSystem from 'expo-file-system'
 import {History_panel} from '../category_components/History_panel';
 const HomeScreen = ({navigation,theme}) => {
 
@@ -15,8 +17,10 @@ const HomeScreen = ({navigation,theme}) => {
   const [month,setmonth] = useState('');
   const [year,setyear] = useState('');
   const [disabled,setDisabled] = useState(true);
-  const  [countClass,setCountClass] = useState(0);
-  
+  var  [countClass,setCountClass] = useState(0);
+  const {user} = useSelector(state=>state.auth)
+  const dispatch = useDispatch();
+
   
 
   useEffect(()=>{
@@ -24,10 +28,29 @@ const HomeScreen = ({navigation,theme}) => {
     {
      
       const currDate = new Date();
-      //await AsyncStorage.removeItem('classList')
-      console.log(await AsyncStorage.getItem('076BCE'));
       setmonth(currDate.toLocaleString('default', { month: 'short' }));
       setyear(currDate.getFullYear());
+      
+      const fileUri = FileSystem.documentDirectory +  `${user}_classList.json`;
+     
+      var Classes = [];
+      try { 
+        var PresentClasses = JSON.parse(await FileSystem.readAsStringAsync(fileUri,{ encoding: FileSystem.EncodingType.UTF8 }));
+        if(PresentClasses)
+        {
+          
+          for(var i=0;i<PresentClasses.length;i++){
+            Classes.push(PresentClasses[i]);
+            
+          }
+        }
+      
+        await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(Classes), { encoding: FileSystem.EncodingType.UTF8 });
+          
+      } catch (error) {
+        console.log("No classes yet");
+      }
+     
   
     }
 
@@ -64,13 +87,14 @@ const HomeScreen = ({navigation,theme}) => {
 
 const styles = StyleSheet.create({
     HomeScreen__Container:{
-   
+   backgroundColor:'#F2F2F2'
     },
   
     HomeScreen__Category:{
       color:'#C9C8C8',
       marginTop:50,
-      marginLeft:20
+      marginLeft:20,
+      
     }
 })
 

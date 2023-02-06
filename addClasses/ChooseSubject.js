@@ -6,7 +6,9 @@ import ModalSelector from 'react-native-modal-selector'
 import SelectDropdown from 'react-native-select-dropdown'
 import {classList,reset} from '../redux/reducers/classListSlice'
 import { fetchStudent } from '../redux/reducers/fetchStudentSlice'
-var Datastore = require('react-native-local-mongodb');
+import * as FileSystem from 'expo-file-system'
+
+
 
 
 const ChooseSubject = ({navigation}) => {
@@ -14,17 +16,30 @@ const ChooseSubject = ({navigation}) => {
 
   const batchList = ['075','076','077','078'];
   
+
   
   const [batch,setBatch] = useState('');
   const [section,setSection] = useState('');
   const [subSelected,setSubSelected] = useState('');
-  const sections = ['AB','CD','EF','GH','IJ','KL'];
+  const sections = {
+    'BCT':['AB','CD'],
+    'BCE':['AB','CD','EF','GH'],
+    'BME':['AB'],
+    'BAR':['AB'],
+    'BEL':['AB'],
+    'BEX':['AB'],
+    
+
+  };
+  const [sectionFormated,setSectionFormated] = useState(['AB']);
+  const classType = ['Lecture','Practical'];
 
 
   const {subjects} = useSelector((state)=>state.addClass)
   const {program} = useSelector(state=>state.addProgram)
   const {isSuccess,isLoading,isError} = useSelector(state=>state.classList)
   const {students} = useSelector(state=>state.fetchStudent)
+  const {user} = useSelector(state=>state.auth)
   const dispatch = useDispatch();
 
   React.useEffect(()=>{
@@ -36,9 +51,10 @@ const ChooseSubject = ({navigation}) => {
                   try {
                     
                   var parameters = [program,batch,section];
-                  console.log(`${parameters[1]}${parameters[0]}${parameters[2]}`)
+                  var classroom__id = parameters[1] + parameters[0] + parameters[2];
+                
                   dispatch(fetchStudent(parameters));
-
+                  AsyncStorage.setItem('classroom__id',classroom__id);  
                   navigation.navigate('Fetch Students');
                   
                   } catch (error) {
@@ -54,39 +70,74 @@ const ChooseSubject = ({navigation}) => {
   const handleClass= async()=>{
 
  
-    
- 
-   
-    let classPrefix = subSelected + ' - ' + batch+program+section;
-
-    try {
-      
-
+    if(batch && section && subSelected)
+    {
+      let classPrefix = subSelected + ' - ' + batch+program+section;
       var updatedClasses = [];
-      var PresentClasses = JSON.parse(await AsyncStorage.getItem('classList'));
-      if(PresentClasses)
-      {
-        for(var i=0;i<PresentClasses.length;i++){
-          updatedClasses.push(PresentClasses[i]);
-        }
-      }
+      const fileUri = FileSystem.documentDirectory + `${user}_classList.json`;
+      try {
+        
+        
+       
      
-
-      updatedClasses.push(classPrefix);
-      AsyncStorage.setItem('classList',JSON.stringify(updatedClasses));      
+        var PresentClasses = JSON.parse(await FileSystem.readAsStringAsync(fileUri,{ encoding: FileSystem.EncodingType.UTF8 }));
+        if(PresentClasses)
+        {
+          for(var i=0;i<PresentClasses.length;i++){
+            updatedClasses.push(PresentClasses[i]);
+          }
+        }
+        updatedClasses.push(classPrefix);
+        await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(updatedClasses), { encoding: FileSystem.EncodingType.UTF8 });
+        //AsyncStorage.setItem('classList',JSON.stringify(updatedClasses));      
+       
+       
+       
+      } catch (error) {
+        updatedClasses.push(classPrefix);
+        await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(updatedClasses), { encoding: FileSystem.EncodingType.UTF8 });
+        //AsyncStorage.setItem('classList',JSON.stringify(updatedClasses));      
+     
+      }
       dispatch(classList(updatedClasses));
       dispatch(reset())
-     
-     
-    } catch (error) {
-      console.log(error)
+  
     }
-
+    else
+    {
+      alert("Please enter all the details")
+    }
+ 
+   
+   
   }
 
   const handleSection = (option) =>{
    
     setSection(option);
+  }
+
+  const handleClassType = (option)=>{
+   
+    if (option === "Lecture")
+    {  
+        setSectionFormated(sections[program]);
+       
+        
+    }
+    else
+    {
+      var tempGroups = [];
+      for(var i = 0; i < sections[program].length;i++)
+      {
+        for (var j = 0 ; j < 2; j++)
+        {
+          tempGroups.push((sections[program])[i][j]);
+        }
+        
+      }
+      setSectionFormated(tempGroups)
+    }
   }
 
 
@@ -101,7 +152,7 @@ const ChooseSubject = ({navigation}) => {
                            data = {subjects}
                            onChange = {(option)=>{setSubSelected(option.label)}}
                            initValue={"Choose a Subject"}
-                      
+                          visible = {true}
                            initValueTextStyle = {{color:'#7E7E7E'}}
                            cancelStyle = {{padding:15}}
                            optionStyle = {{padding:15}}
@@ -122,7 +173,7 @@ const ChooseSubject = ({navigation}) => {
                                 buttonTextStyle = {{color:'#232222'}}
                                 dropdownStyle = {{borderBottomLeftRadius:9,borderBottomRightRadius:9,backgroundColor:'#F9F9F9'}}
                                 
-                                defaultButtonText = {'Select a Program'}
+                                defaultButtonText = {'Select a Batch'}
                                 buttonTextAfterSelection={(selectedItem, index) => {
                                   // text represented after item is selected
                                   // if data array is an array of objects then return selectedItem.property to render after item is selected
@@ -134,9 +185,35 @@ const ChooseSubject = ({navigation}) => {
                                   return item
                                 }}
                               />
+                  <SelectDropdown
+                                data={classType}
+                                onSelect={(selectedItem, index) => {
+                                  handleClassType(selectedItem)}
+                                }
+                                buttonStyle = {{backgroundColor:'#fff',
+                                width:'95%',
+                                marginTop:20,
+                                borderRadius:9,
+                                
+                              }}
+                                buttonTextStyle = {{color:'#232222'}}
+                                dropdownStyle = {{borderBottomLeftRadius:9,borderBottomRightRadius:9,backgroundColor:'#F9F9F9'}}
+                                
+                                defaultButtonText = {'Select Class Type'}
+                                buttonTextAfterSelection={(selectedItem, index) => {
+                                  // text represented after item is selected
+                                  // if data array is an array of objects then return selectedItem.property to render after item is selected
+                                  return `Class Type: ${selectedItem}`
+                                }}
+                                rowTextForSelection={(item, index) => {
+                                  // text represented for each item in dropdown
+                                  // if data array is an array of objects then return item.property to represent item in dropdown
+                                  return item
+                                }}
+                              />
 
                   <SelectDropdown
-                                      data={sections}
+                                      data={sectionFormated}
                                       onSelect={(selectedItem, index) => {
                                         handleSection(selectedItem)
                                       }}
@@ -195,7 +272,7 @@ const styles = StyleSheet.create({
   },
   Subject__Logo:{
     
-    height:300,
+    height:200,
     resizeMode:'contain'
   }
 

@@ -4,6 +4,7 @@ import addClassReducer from './reducers/addClassSlice'
 import classListReducer from './reducers/classListSlice';
 import addProgramReducer from './reducers/programSlice'
 import fetchStudentReducer from "./reducers/fetchStudentSlice";
+import getStudentReducer from './reducers/getStudent';
 // export const store = configureStore({
 
 
@@ -14,7 +15,8 @@ export const store = configureStore(
             addClass:addClassReducer,
             classList:classListReducer,
             fetchStudent:fetchStudentReducer,
-            addProgram:addProgramReducer
+            addProgram:addProgramReducer,
+            getStudent:getStudentReducer
         }
     }
     

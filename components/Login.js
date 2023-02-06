@@ -40,7 +40,9 @@ const Login = ({navigation,theme}) => {
 
             if(user || isSuccess) {
                
-              dispatch(userData(username))
+           
+             
+              dispatch(userData(await AsyncStorage.getItem('username')))
               navigation.navigate('Home')
               dispatch(reset())
         

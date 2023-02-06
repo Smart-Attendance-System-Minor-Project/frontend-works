@@ -1,24 +1,37 @@
-import { View, Text,StyleSheet, TextInput,TouchableOpacity } from 'react-native'
+import { View, Text,StyleSheet, TextInput,TouchableOpacity,ScrollView, ActivityIndicator } from 'react-native'
 import React,{useState,useEffect} from 'react'
 import ModalSelector from 'react-native-modal-selector'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSelector } from 'react-redux';
 import ClassAdded from './ClassAdded';
+import * as FileSystem from 'expo-file-system'
 
 const ChooseClass = ({navigation}) => {
     let index = 0;
 
     const [class_,setClass_] = useState([]);
     const [classType_,setClassTypes] = useState('');
-
+    const [isData,setisData] = useState(false);
     const [group,setGroup] = useState('');
     const {className} = useSelector(state=>state.classList)
-
+    const {user} = useSelector(state=>state.auth);
+    const {isLoading} = useSelector(state=>state.fetchStudent)
     useEffect(()=>{
+
+      
         async function getClasses()
         {
-          setClass_(JSON.parse(await AsyncStorage.getItem('classList')));
+           try {
+            const fileUri = FileSystem.documentDirectory +  `${user}_classList.json`;
+            const data = await FileSystem.readAsStringAsync(fileUri, { encoding: FileSystem.EncodingType.UTF8 });
+            setisData(true);
+            setClass_(JSON.parse(data));
+
         
+           } catch (error) {
+            setisData(false);
+           }
+            
           
         }
         getClasses()
@@ -46,37 +59,39 @@ const ChooseClass = ({navigation}) => {
       
     ]
 
-    const handleClassForAttendance = async()=>{
+    // const handleClassForAttendance = async()=>{
 
-        
-        navigation.navigate('Attendance Screen');
-    }
-  return (
-    <View style = {styles.ClassSelection__Container}>
-        <View style = {styles.ClassSelection__Section1}>
+     
+    //     navigation.navigate('Attendance Screen');
+    // }
+  {return (
+    <ScrollView style = {styles.ClassSelection__Container}>
+
+        {isData && <View style = {styles.ClassSelection__Section1}>
             {
-                data.map(data=>{
+                data.map(classroom=>{
                     return(
-                        <ClassAdded
-                        className={data}
-                        classType = 'L'
-                        navigation={navigation}
-                        />
+                        <View key={classroom}>
+                            <ClassAdded
+
+                                className={classroom}
+                                navigation={navigation}
+                            />
+                        </View>
+                       
                     )
                    
                 })
             }
 
         
-        </View>
+        </View>}
+        {!isData && <View style = {styles.No__Classes}>
+            <Text>No classes yet. Go and add classes.</Text>    
+        </View>}
       
 
-        <View style = {styles.ClassSelection__Buttons}>
-           
-            <TouchableOpacity style = {styles.ClassSelection__Button2}>
-                <Text>Cancel</Text>
-            </TouchableOpacity>
-        </View>
+   
 
                
         
@@ -85,8 +100,8 @@ const ChooseClass = ({navigation}) => {
         
 
 
-    </View>
-  )
+    </ScrollView>
+  )}
 }
 const styles = StyleSheet.create({
     ClassSelection__Container:{

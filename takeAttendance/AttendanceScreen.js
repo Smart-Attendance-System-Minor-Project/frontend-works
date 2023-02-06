@@ -3,27 +3,25 @@ import React,{useEffect,useState} from 'react'
 import Swiper from 'react-native-deck-swiper'
 import { useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as FileSystem from 'expo-file-system';
 
 const AttendanceScreen = ({navigation}) => {
 
     let [count,setCount] = useState(0);
     const [classN,setClassN] = useState('');
-
- 
-    
-
-    const {students} = useSelector(state=>state.fetchStudent)
+    const [studentList,setStudentList] = useState([]);
+    const [month,setmonth] = useState('');
+    const {students} = useSelector(state=>state.getStudent)
     useEffect(()=>{
       async function getStudentsForAttendance()
       {
-     
-          
-          let className = await AsyncStorage.getItem('class_');
-  
 
-     
+         
+          let className = await AsyncStorage.getItem('class_');
           setClassN(className);
- 
+          const currDate = new Date();
+          setmonth(currDate.toLocaleString('default', { month: 'short',day:'2-digit', year:'numeric' }));
+
       }
       getStudentsForAttendance();
       
@@ -37,7 +35,8 @@ const AttendanceScreen = ({navigation}) => {
                 <Text style = {{textAlign:'center'}}>{classN}</Text>
             </View>
             <View style = {styles.AttendanceScreen__Infos}>
-                <Text>JAN 29, 2023</Text>
+         
+                <Text>{month}</Text>
                 <Text>{count} out of {students.length}</Text>
             </View>
 
@@ -47,8 +46,8 @@ const AttendanceScreen = ({navigation}) => {
               
              <Swiper 
                  cards={students}
-                 onSwiped={(cardIndex) => {setCount(++count)}}
-                 onSwipedAll={() => {console.log('onSwipedAll')}}
+                 onSwiped={(cardIndex) => {console.log(students[cardIndex]); setCount(++count)}}
+                 onSwipedAll={() => {alert("Attendance has been successful")}}
                  cardIndex={0}
                  backgroundColor={'#4FD0E9'}
                 
@@ -107,8 +106,7 @@ const AttendanceScreen = ({navigation}) => {
                   </View>
                  )}
                  >
-               
-                 
+
                  </Swiper>
            
             </View>
