@@ -18,6 +18,7 @@ const login = async (userData) => {
            if(response.data)
            {
             AsyncStorage.setItem("token",response.data.success)
+            await AsyncStorage.setItem('username',userData.username);
            }
     
            return response.data

@@ -33,7 +33,7 @@ const AddClass = ({navigation}) => {
 
   const year_part = ['1/1','1/2','2/1','2/2','3/1','3/2','4/1','4/2'];
  
-  const Programs = ['BCT','BCE','BME','BEL','BEX'];
+  const Programs = ['BCT','BCE','BME','BEL','BEX', "BEI", "BAE"];
 
 
   const handleProgram = (option) =>{
@@ -143,18 +143,7 @@ const AddClass = ({navigation}) => {
            
     
         
-          <TouchableOpacity style = {[styles.ClassSelection__Button2,theme=== 'light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]}>
-              <Text style = {[
-                {shadowColor:'black',
-                shadowOffset: {
-                    width: 1,
-                    height: 4,
-                },
-                shadowOpacity: 0.09,
-                shadowRadius: 3.84,},
-                theme === 'light'?{color:'#000'}:{color:'#fff'}]}>Cancel</Text>
-          </TouchableOpacity>
-          
+     
         
       </View>
         
@@ -174,7 +163,7 @@ const styles = StyleSheet.create({
       display:'flex',
       flexDirection:'column',
       alignItems:'center',
-      marginTop:30
+      marginTop:120
     
     },  
     selection_contains:{
@@ -204,7 +193,11 @@ const styles = StyleSheet.create({
         display:'flex',
         flexDirection:'column',
         alignItems:'center',
-        marginTop:'25%'
+        justifyContent:'center',
+        position:'relative',
+        bottom:-200,
+        width:'100%',
+        
        },
        ClassSelection__Button1:{
         backgroundColor:'#29B0DB',

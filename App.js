@@ -19,6 +19,7 @@ var Datastore = require('react-native-local-mongodb');
 import { useSelector } from 'react-redux';
 import AddClass from './addClasses/AddClass';
 import AttendanceScreen from './takeAttendance/AttendanceScreen';
+import * as FileSystem from 'expo-file-system'
 import {
   SafeAreaView,
   ScrollView,
@@ -53,12 +54,19 @@ const App = () => {
   const [theme,setTheme] = useState(Appearance.getColorScheme());
   Appearance.addChangeListener((scheme)=>{
    setTheme(scheme.colorScheme); 
+
  })
 
 
+  const createFile = async()=>{
+    const fileUri = FileSystem.documentDirectory + 'studentList.json';
+    const data='';
+    await FileSystem.writeAsStringAsync(fileUri,data,{ encoding: FileSystem.EncodingType.UTF8 });
+  }
 
  useEffect(()=>{
   
+
  },[])
 
  
@@ -72,6 +80,7 @@ const App = () => {
       
       
       <NavigationContainer>
+      
       <Stack.Navigator initialRouteName = 'Login' 
      
 
@@ -83,7 +92,10 @@ const App = () => {
         
         </Stack.Screen>
         
-        <Stack.Screen name = "Register"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}>
+        <Stack.Screen name = "Register"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+        headerBackVisible:false,
+        gestureEnabled:false,
+      }}>
 
               {(props) => <Register {...props} theme = {theme}/>} 
         </Stack.Screen>
@@ -92,22 +104,30 @@ const App = () => {
         {(props) => <ForgotPassword {...props} theme = {theme}/>} 
         </Stack.Screen>
 
-        <Stack.Screen name = "Choose Class"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}>
+        <Stack.Screen name = "Choose Class"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+        gestureEnabled:false,
+      }}>
 
         {(props) => <ChooseClass {...props} theme = {theme}/>} 
         </Stack.Screen>
 
-        <Stack.Screen name = "Add Class"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}>
+        <Stack.Screen name = "Add Class"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+        gestureEnabled:false,}}>
 
         {(props) => <AddClass {...props} theme = {theme}/>} 
         </Stack.Screen>
 
-        <Stack.Screen name = "Choose Subject"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}>
+        <Stack.Screen name = "Choose Subject"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+        gestureEnabled:false,
+      }}>
 
         {(props) => <ChooseSubject {...props} />} 
         </Stack.Screen>
 
-        <Stack.Screen name = "Fetch Students"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}>
+        <Stack.Screen name = "Fetch Students"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+        gestureEnabled:false,
+        headerBackVisible:false
+      }}>
 
         {(props) => <FetchStudents {...props} />} 
         </Stack.Screen>        
