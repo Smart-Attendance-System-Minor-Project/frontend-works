@@ -7,6 +7,7 @@ import SelectDropdown from 'react-native-select-dropdown'
 import {classList,reset} from '../redux/reducers/classListSlice'
 import { fetchStudent } from '../redux/reducers/fetchStudentSlice'
 import * as FileSystem from 'expo-file-system'
+import axios from 'axios'
 
 
 
@@ -28,6 +29,7 @@ const ChooseSubject = ({navigation}) => {
     'BAR':['AB'],
     'BEL':['AB'],
     'BEX':['AB'],
+    'BEI':['AB']
     
 
   };
@@ -74,6 +76,17 @@ const ChooseSubject = ({navigation}) => {
     {
       let classPrefix = subSelected + ' - ' + batch+program+section;
       var updatedClasses = [];
+      const newClass = {
+        username:user,
+        batch:batch,
+        faculty:program,
+        section:section,
+        subject:subSelected,
+        class_type:section.length == 1?'P':'L'
+      }
+
+      //const response = await axios.post('https://prat051.pythonanywhere.com/attendance/add_class/',newClass);
+      
       const fileUri = FileSystem.documentDirectory + `${user}_classList.json`;
       try {
         
@@ -101,6 +114,8 @@ const ChooseSubject = ({navigation}) => {
       }
       dispatch(classList(updatedClasses));
       dispatch(reset())
+
+      
   
     }
     else
@@ -152,11 +167,11 @@ const ChooseSubject = ({navigation}) => {
                            data = {subjects}
                            onChange = {(option)=>{setSubSelected(option.label)}}
                            initValue={"Choose a Subject"}
-                          visible = {true}
+                           visible = {true}
                            initValueTextStyle = {{color:'#7E7E7E'}}
                            cancelStyle = {{padding:15}}
                            optionStyle = {{padding:15}}
-                           selectStyle = {{padding:25}}
+                           selectStyle = {{padding:25,width:'100%'}}
                            />
 
                   <SelectDropdown
@@ -253,15 +268,22 @@ const styles = StyleSheet.create({
     alignItems:'center',
     justifyContent:'center',
     height:'80%',
+    marginTop:40,
+    width:'100%',
     justifyContent:'space-around'
   },  
   ChooseSubject__Container:{
 
     marginTop:20,
-    width:'82%'
+    width:'85%',
+    display:'flex',
+    flexDirection:'column',
+    alignItems:'center',
+    justifyContent:'center'
   },
   ChooseSubject__button:{
-    width:'82%'
+    width:'82%',
+    marginTop:40
   },
   ChooseSubject__AddClass:{
     backgroundColor:'#29B0DB',
@@ -272,7 +294,7 @@ const styles = StyleSheet.create({
   },
   Subject__Logo:{
     
-    height:200,
+    height:250,
     resizeMode:'contain'
   }
 

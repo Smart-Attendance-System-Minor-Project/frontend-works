@@ -41,6 +41,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ForgotPassword from './components/ForgotPassword';
 import FetchStudents from './addClasses/FetchStudents';
 import { useEffect } from 'react';
+import ViewRecords from './AttendanceRecords/ViewRecords';
 
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
  * LTI update could not be added via codemod */
@@ -58,11 +59,13 @@ const App = () => {
  })
 
 
-  const createFile = async()=>{
-    const fileUri = FileSystem.documentDirectory + 'studentList.json';
-    const data='';
-    await FileSystem.writeAsStringAsync(fileUri,data,{ encoding: FileSystem.EncodingType.UTF8 });
-  }
+  // const createFile = async()=>{
+  //   const fileUri = FileSystem.documentDirectory + 'studentList.json';
+  //   const data='';
+  //   await FileSystem.writeAsStringAsync(fileUri,data,{ encoding: FileSystem.EncodingType.UTF8 });
+  // }
+
+  
 
  useEffect(()=>{
   
@@ -141,28 +144,30 @@ const App = () => {
         headerLeft: ()=>(
           <Button
           onPress={()=>alert("You pressed it")}
-          title = {`prat051`}
+          title = {''}
           color = '#fff'
           
           ></Button>
         ),
-        headerRight:()=>(
-          <TouchableOpacity>
-            <Image source = {require('./pictures/icons_images/more_options.png')} style = {{resizeMode:'contain',height:20}}/>
-          </TouchableOpacity>
-            
-          
-         
-        ),
+      
         headerTintColor: '#fff'}}>
         {(props) => <HomeScreen {...props} theme = {theme}/>} 
         </Stack.Screen>
 
         <Stack.Screen name = "Attendance Screen" options = {{headerStyle:{backgroundColor:'#29B0DB'},
-       title:'',
-        
+       title:'Attendance Time!',
+       gestureEnabled:false,
+       headerBackVisible:false,
         headerTintColor: '#fff'}}>
         {(props) => <AttendanceScreen {...props} theme = {theme}/>} 
+        </Stack.Screen>
+
+        <Stack.Screen name = "View Records" options = {{headerStyle:{backgroundColor:'#29B0DB'},
+       title:'Your Records',
+       gestureEnabled:false,
+       
+        headerTintColor: '#fff'}}>
+        {(props) => <ViewRecords {...props} theme = {theme}/>} 
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

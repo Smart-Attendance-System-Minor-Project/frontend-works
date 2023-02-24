@@ -1,53 +1,187 @@
-import { View, Text,StyleSheet,TouchableOpacity } from 'react-native'
+import { View, ScrollView, Text,StyleSheet,TouchableOpacity,Image} from 'react-native'
 import React,{useEffect,useState} from 'react'
 import Swiper from 'react-native-deck-swiper'
-import { useSelector } from 'react-redux';
+import { useDispatch,useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
+import { recordList } from '../redux/reducers/recordListSlice';
+import axios from 'axios';
+import CheckBox from 'expo-checkbox'
+import { FancyAlert,LoadingIndicator } from 'react-native-expo-fancy-alerts';
+import { record } from '../redux/reducers/recordsSlice';
+
 
 const AttendanceScreen = ({navigation}) => {
 
-    let [count,setCount] = useState(0);
+    let [presentCount,setPresentCount] = useState(0);
+    let [absentCount,setAbsentCount] = useState(0);
     const [classN,setClassN] = useState('');
-    const [studentList,setStudentList] = useState([]);
-    const [month,setmonth] = useState('');
+    let [studentList,setStudentList] = useState({});
+    const [TodayDate,setDate] = useState('');
+    const [visible, setVisible] = useState(false);
+    const [isLoading,setIsLoading] = useState(false);
+    const [reviewBool,setReviewBool] = useState(false);
+    const [refresh,setRefresh] = useState(false);
+    var recordLists = new Object();
+    var TodayRecord = new Object();
+   
     const {students} = useSelector(state=>state.getStudent)
+    const {user} = useSelector(state=>state.auth)
+
+    const dispatch = useDispatch();
+
     useEffect(()=>{
       async function getStudentsForAttendance()
       {
 
-         
+          const currDate = new Date();
+          setDate(currDate.toLocaleString('default', { month:'2-digit' ,day:'2-digit', year:'numeric' }));
           let className = await AsyncStorage.getItem('class_');
           setClassN(className);
-          const currDate = new Date();
-          setmonth(currDate.toLocaleString('default', { month: 'short',day:'2-digit', year:'numeric' }));
+          //console.log(visible,isLoading)
+ 
 
       }
       getStudentsForAttendance();
       
-    },[])
+    },[visible,isLoading,reviewBool,refresh])
+
+
+    const presentStudentsHandler = (student) =>{
+     
+      recordLists[student] = "P";
+
+    }
+
+    const absentStudentsHandler = (student) =>{
+     
+     
+      recordLists[student] = "A";
+    }
+
+    const handleAlertEvent = ()=>{
+      setVisible(false);
+      navigation.navigate('Home')
+    }
+
+    const handleReviewEvent =(studentList)=>{
+      setReviewBool(false);
+      handleTodayRecord(studentList);
+
+    }
+
+    const handleAllPresent =async()=>{
+      students.map(student=>{
+        recordLists[student] = "P";
+      })
+
+      
+      
+      handleTodayRecord(recordLists);
+    }
 
     
+
+    const handleTodayRecord =async(recordLists)=> {
+
+      
+
+      
+      TodayRecord[TodayDate] = {
+        ClassType: (classN.split(' - ')[1]).slice(6,8).length == 1?"P":"L",
+        Group:(classN.split(' - ')[1]).slice(6,8),
+        Records:recordLists
+
+      }
+
+      //creating a uri for record file
+      const recordFileDirUri = FileSystem.documentDirectory + `AttendanceRecords_${user}/`+ `${(classN.split(' - ')[1])}_${classN.split(' - ')[0].replace(/\s+/g, '')}.json`;
+      
+      //This is the code for saving data in database SQL 
+      const AttendanceRecord = {
+        username:user,
+        class_name:classN.split(' - ')[1],
+        class_type:(classN.split(' - ')[1]).slice(6,8).length == 1?"P":"L",
+        subject:classN.split(' - ')[0],
+        attendance_record:TodayRecord
+
+      }
+
+      //console.log(recordLists)
+      // const response = await axios.post('https://prat051.pythonanywhere.com/attendance/save_record/',AttendanceRecord);
+      // console.log(response);
+      //Code upto here
+
+
+      try {
+        const pastRecords = JSON.parse(await FileSystem.readAsStringAsync(recordFileDirUri,{encoding:FileSystem.EncodingType.UTF8}));
+        
+        pastRecords[TodayDate] = {
+          ClassType: (classN.split(' - ')[1]).slice(6,8).length == 1?"P":"L",
+          Group:(classN.split(' - ')[1]).slice(6,8),
+          Records:recordLists
+        }
+
+       
+        await FileSystem.writeAsStringAsync(recordFileDirUri,JSON.stringify(pastRecords), { encoding: FileSystem.EncodingType.UTF8 });
+        console.log("Record successfully added!")
+        
+        
+        
+
+      } catch (error) {
+        var newRecord = new Object();
+        newRecord[TodayDate] = {
+          ClassType: (classN.split(' - ')[1]).slice(6,8).length == 1?"P":"L",
+          Group:(classN.split(' - ')[1]).slice(6,8),
+          Records:recordLists
+        }
+
+
+        await FileSystem.writeAsStringAsync(recordFileDirUri,JSON.stringify(newRecord), { encoding: FileSystem.EncodingType.UTF8 });
+
+        const getRecordList = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory + `AttendanceRecords_${user}`)
+       
+        dispatch(recordList(getRecordList))
+
+      }
+
+      //setIsLoading(false);
+      setVisible(true);
+      
+      
+      
+      //navigation.navigate('Home')
+    }   
+    
+   
    
     return (
         <View style = {styles.AttendanceScreen__Container}>
+         
+            <LoadingIndicator visible={isLoading} />
             <View style = {styles.AttendanceScreen__SubTitle}>
                 <Text style = {{textAlign:'center'}}>{classN}</Text>
             </View>
             <View style = {styles.AttendanceScreen__Infos}>
          
-                <Text>{month}</Text>
-                <Text>{count} out of {students.length}</Text>
+                <Text>{TodayDate}</Text>
+              
+                <Text style = {{backgroundColor:'#fff',padding:4}}>Present {presentCount}</Text>
+                <Text style = {{backgroundColor:'#fff',padding:4}}>Absent {absentCount}</Text>
+                
+               
             </View>
 
-            <View style = {{position:'relative',zIndex:1,
+            <View style = {{position:'relative',zIndex:0,
             marginRight:'75%',marginTop:-30
           }}>
               
              <Swiper 
                  cards={students}
-                 onSwiped={(cardIndex) => {console.log(students[cardIndex]); setCount(++count)}}
-                 onSwipedAll={() => {alert("Attendance has been successful")}}
+                 onSwipedLeft  = {(cardIndex)=>absentStudentsHandler(students[cardIndex])}
+                 onSwipedRight = {(cardIndex)=>presentStudentsHandler(students[cardIndex])}
+                 onSwipedAll={()=>{setStudentList(recordLists);setReviewBool(true) }}
                  cardIndex={0}
                  backgroundColor={'#4FD0E9'}
                 
@@ -76,10 +210,10 @@ const AttendanceScreen = ({navigation}) => {
                  /* Optional */
                   title: 'PRESENT',
                     style: { label:{
-                      color:'#9DFC7C',
+                      color:'green',
                       fontSize:20,
                       borderWidth:1,
-                      borderColor:'#9DFC7C'
+                      borderColor:'green'
                        },
                       wrapper: {
                         flexDirection: 'column',
@@ -97,7 +231,9 @@ const AttendanceScreen = ({navigation}) => {
                  disableTopSwipe = {true}
                  renderCard = {(card)=>(
                   <View  style = {styles.AttendanceScreen__Swipes}>
-                      <View style = {styles.AttendanceSwipe__Photo}></View>
+                      <View style = {styles.AttendanceSwipe__Photo}>
+                       
+                      </View>
                       <View style = {styles.AttendanceSwipe__Information}>
                         <Text style = {{fontSize:17}}>{card.split(' - ')[0]}</Text>
                         <Text style={{color:'#29b0db',fontSize:16}}>{card.split(' - ')[1]}</Text>
@@ -105,27 +241,94 @@ const AttendanceScreen = ({navigation}) => {
                       </View>
                   </View>
                  )}
-                 >
-
-                 </Swiper>
+                 />
            
             </View>
             
             
             <View style = {styles.AttendanceScreen__Buttons}>
                   <TouchableOpacity style = {styles.ClassSelection__Button1}
-                  onPress = {()=>{navigation.navigate('Attendance Screen')}}
+                  onPress = {handleAllPresent}
                   >
                       <Text style = {{color:'white'}}>Mark All Present</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style = {styles.ClassSelection__Button2}>
+                  <TouchableOpacity style = {styles.ClassSelection__Button2} onPress = {()=>{
+                    //alert("Are you sure want to cancel the attendance? Terminating won't save any data you took so far")
+                    navigation.navigate("Home")
+                  }}>
                       <Text>Cancel</Text>
                   </TouchableOpacity>
             </View>
+
+
+            <FancyAlert
+                  visible={visible}
+                  icon={<View style={{
+                    flex: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#4CB748',
+                    borderRadius: 50,
+                    width: '100%',
+                  }}><Text><Image source={require('../pictures/icons_images/check-mark.png')} style = {{width:20,height:20}}/></Text></View>}
+                  style={{ backgroundColor: 'white' }}
+                >
+                  <Text style={{ marginTop: -16, marginBottom: 32 }}>Attendance record saved successfully!</Text>
+                  <TouchableOpacity style={styles.btn} onPress={handleAlertEvent}>
+                     <Text style={{color:'#fff'}}>Great</Text>
+                  </TouchableOpacity>
+            </FancyAlert>
+
+            <FancyAlert
+                  visible={reviewBool}
+                  icon={<View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#29b0db',
+                    borderRadius: 10,
+                    width: '170%',
+                  }}><Text style = {{color:'white'}}>Review</Text></View>}
+                  style={{ backgroundColor: '#fff'}}
+                  
+                >
+                  <View>
+                    <Text style={{ marginTop: -20,textAlign:'center', marginBottom: 32 }}>Please review before confirming</Text>
+                    <ScrollView style = {{maxHeight:200}}>
+                    {Object.keys(studentList).map((key, index) => {
+                      return (
+
+                      <View key = {index} style = {styles.ReviewList__EachItem}>
+                        <Text>{key.split(' - ')[1]}</Text>
+                        <CheckBox value = {studentList[key] === "P"? true:false} color = {'#29b0db'}
+                        onValueChange = {()=>{
+                          console.log("Before",studentList[key]);
+                          studentList[key] = (studentList[key]==="P"?"A":"P");
+                          console.log("After",studentList[key]);
+                          setRefresh(!refresh);
+                        }}
+                        />
+                      </View>
+                      );
+                    })}
+                    
+ 
+                    </ScrollView>
+
+                    <TouchableOpacity style={styles.btn} onPress={()=>handleReviewEvent(studentList)}>
+                     <Text style={{color:'#fff'}}>All Good</Text>
+                    </TouchableOpacity>
+
+                  </View>
+                 
+                 
+            </FancyAlert>
           
         </View>
     )
 }
+
 
 const styles = StyleSheet.create({
   AttendanceScreen__Container:{
@@ -159,7 +362,8 @@ const styles = StyleSheet.create({
     width:'80%',
     flexDirection:'row',
     justifyContent:'space-between',
-    marginTop:30
+    marginTop:30,
+    alignItems:'center'
     
   },
   
@@ -179,11 +383,14 @@ const styles = StyleSheet.create({
     shadowRadius: 5.84,
   },
   AttendanceSwipe__Photo:{
-    backgroundColor:'grey',
+    backgroundColor:'#fff',
     width:250,
     height:'65%',
     borderTopLeftRadius:9,
-    borderTopRightRadius:9
+    borderTopRightRadius:9,
+    
+    alignItems:'center',
+   
   },
   AttendanceSwipe__Information:{
     display:'flex',
@@ -196,8 +403,6 @@ const styles = StyleSheet.create({
    
       display:'flex',
      marginTop:'110%',
-    
-     
       alignItems:'center',  
   },
   ClassSelection__Button1:{
@@ -215,6 +420,21 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.09,
     shadowRadius: 3.84,
+   },
+   btn:{
+    borderRadius: 32,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    alignSelf: 'stretch',
+    backgroundColor: '#4CB748',
+    marginTop: 10,
+    marginBottom:20,
+    minWidth: '50%',
+    paddingHorizontal: 16,
    },
    ClassSelection__Button2:{
     backgroundColor:'#FFF',
@@ -235,7 +455,12 @@ const styles = StyleSheet.create({
    },
    swipe__list:{
     display:'flex'
-   }
+   },
+   ReviewList__EachItem:{display:'flex',
+   flexDirection:'row',
+   justifyContent:'space-between',
+   alignItems:'center',
+   margin:10}
 })
 
 export default AttendanceScreen

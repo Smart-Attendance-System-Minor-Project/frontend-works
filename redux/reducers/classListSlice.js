@@ -1,6 +1,7 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
+import ClassAdded from '../../takeAttendance/ClassAdded';
 import addClassService from './addClassService';
-
+import axios from 'axios'
 
 
 
@@ -12,6 +13,18 @@ const initialState = {
     isLoading: false,
     
 }
+
+export const classAdd = createAsyncThunk('class_/classAddedDB',async(classData,thunkAPI)=>{
+    try {
+      
+        const response = await axios.post('https://prat051.pythonanywhere.com/attendance/add_class/',classData);
+        return response.data.message;
+
+    } catch (error) {
+        thunkAPI.rejectWithValue();
+        
+    }
+})
 
 
 export const classList = createAsyncThunk('class_/classItem',async (classData,thunkAPI)=>{
@@ -61,7 +74,23 @@ export const authSlice = createSlice({
             state.isError = true
 
            
-        });
+        })
+        .addCase(classAdd.fulfilled,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = true
+            console.log(action.payload)
+            
+            
+           
+           
+        })
+        .addCase(classAdd.rejected,(state,action)=>{
+            state.isLoading = false
+            state.isSuccess = false
+            
+           
+           
+        })
 
     }
 })

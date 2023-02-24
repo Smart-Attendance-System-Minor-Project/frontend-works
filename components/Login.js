@@ -5,7 +5,8 @@ import darkMode from '../styles/darkMode';
 import {login,reset,userData} from '../redux/reducers/authSlice';
 import {useSelector,useDispatch} from 'react-redux';
 import { version } from 'react';
-
+import * as FileSystem from 'expo-file-system'
+import { recordList } from '../redux/reducers/recordListSlice';
 
 const Login = ({navigation,theme}) => {
  
@@ -39,6 +40,25 @@ const Login = ({navigation,theme}) => {
             }
 
             if(user || isSuccess) {
+
+                const recordFileDirUri = FileSystem.documentDirectory + `AttendanceRecords_${username}`;
+                try {
+                  const recordsPresent = await FileSystem.readDirectoryAsync(recordFileDirUri);
+                  if(recordsPresent) 
+                  {   
+                    
+                    
+                    dispatch(recordList(recordsPresent))
+          
+                  }
+                 
+                  
+          
+          
+                } catch (error) {
+                  await FileSystem.makeDirectoryAsync(recordFileDirUri);
+                  console.log("Directory has been created")
+                }
                
            
              

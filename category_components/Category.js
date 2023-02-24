@@ -27,6 +27,7 @@ const Category = ({icon,label,numbers,action,navigation,disabled}) => {
 
         case 'LOG_OUT':
           AsyncStorage.removeItem('token')
+          AsyncStorage.removeItem('username')
           dispatch(reset());
           navigation.navigate('Login')
        
@@ -39,9 +40,7 @@ const Category = ({icon,label,numbers,action,navigation,disabled}) => {
     <View style = {[styles.category_container]}>
       <TouchableOpacity  style = {[styles.category_buttons,theme=== 'light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]} onPress = {handleClick}>
         <Text style = {[styles.category__title,theme=== 'light'?{color:'#000'}:{color:'#fff'}]}>{label}</Text>
-        {numbers &&  <View style = {styles.category__numbers}>
-          <Text>{numbers}</Text>
-        </View>}
+       
       </TouchableOpacity>
 
      
@@ -61,9 +60,7 @@ const styles = StyleSheet.create({
     
         
     },
-    disabled:{
-      opacity:0.4
-    },
+  
     category_buttons:{
         width:'100%',
         display:'flex',
