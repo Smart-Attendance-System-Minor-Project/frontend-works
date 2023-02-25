@@ -108,7 +108,7 @@ const AttendanceScreen = ({navigation}) => {
       }
 
       //console.log(recordLists)
-      // const response = await axios.post('https://prat051.pythonanywhere.com/attendance/save_record/',AttendanceRecord);
+      const response = await axios.post('https://prat051.pythonanywhere.com/attendance/save_record/',AttendanceRecord);
       // console.log(response);
       //Code upto here
 

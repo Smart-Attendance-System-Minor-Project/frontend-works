@@ -59,7 +59,7 @@ const ClassAdded = ({className,classType,navigation}) => {
         
         <TouchableOpacity style = {styles.ClassAdded__Touch} onPress = {handleStudents}>
             <View style = {{display:'flex',flexDirection:'row',alignItems:'center'}}>
-                <View style = {[{borderRadius:'50%',width:24},((className.split(' - ')[1]).slice(6,8)).length == 1?{backgroundColor:'#FFC5C5'}:{backgroundColor:'#A3FFA1'}]}>
+                <View style = {[{borderRadius:50,width:24},((className.split(' - ')[1]).slice(6,8)).length == 1?{backgroundColor:'#FFC5C5'}:{backgroundColor:'#A3FFA1'}]}>
                     <Text style = {{color:'#1B5C21',padding:3,textAlign:'center'}}>{((className.split(' - ')[1]).slice(6,8)).length == 1?'P':'L'}</Text>
                 
                 </View>

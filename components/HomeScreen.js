@@ -143,7 +143,7 @@ const HomeScreen = ({navigation,theme}) => {
                     style = {[theme==='light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]}
                     barStyle = {{backgroundColor:'#29B0DB'}}
                     >
-                       
+                         
                         {/* Your Content Here */}
                         
                         <ScrollView style = {styles.history__titleContainer}>

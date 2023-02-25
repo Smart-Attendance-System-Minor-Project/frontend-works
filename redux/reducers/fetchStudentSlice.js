@@ -17,7 +17,11 @@ const initialState = {
 
 
 export const fetchStudent = createAsyncThunk('addClass/fetchStudent',async (parameters,thunkAPI)=>{
-   
+    const config = {
+		headers: {
+			'Content-Type':'multipart/form-data'
+        }
+    }
         
     try {
         let Student_Info = [];
@@ -28,7 +32,7 @@ export const fetchStudent = createAsyncThunk('addClass/fetchStudent',async (para
             params1.append('batch',parameters[1]);
             params1.append('group',parameters[2]);
 
-            const studentData1 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params1)).data;
+            const studentData1 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params1,config)).data;
 
          
             studentData1.map(student=>{
@@ -53,8 +57,8 @@ export const fetchStudent = createAsyncThunk('addClass/fetchStudent',async (para
             params2.append('group',parameters[2][1]);
            
             
-            studentData1 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params1)).data;
-            studentData2 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params2)).data;
+            studentData1 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params1,config)).data;
+            studentData2 = ( await axios.post('http://assmnt.pcampus.edu.np/api/students/',params2,config)).data;
 
           
             studentData1.map(student=>{

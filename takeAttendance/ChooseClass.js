@@ -31,12 +31,7 @@ const ChooseClass = ({navigation}) => {
             setisclass_(false);
            }
 
-
-          
-      
-           
-       
-            
+   
           
         }
         getClasses()

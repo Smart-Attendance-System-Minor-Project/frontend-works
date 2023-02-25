@@ -85,7 +85,7 @@ const ChooseSubject = ({navigation}) => {
         class_type:section.length == 1?'P':'L'
       }
 
-      //const response = await axios.post('https://prat051.pythonanywhere.com/attendance/add_class/',newClass);
+      const response = await axios.post('https://prat051.pythonanywhere.com/attendance/add_class/',newClass);
       
       const fileUri = FileSystem.documentDirectory + `${user}_classList.json`;
       try {

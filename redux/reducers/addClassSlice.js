@@ -54,6 +54,7 @@ export const authSlice = createSlice({
         .addCase(addClass.fulfilled,(state,action)=>{
             state.isLoading = false
             state.isSuccess = true
+            
             state.subjects = action.payload
            
            

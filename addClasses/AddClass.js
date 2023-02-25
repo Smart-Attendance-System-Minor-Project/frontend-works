@@ -23,6 +23,7 @@ const AddClass = ({navigation}) => {
 
   useEffect(()=>{
 
+    
     if(isSuccess)
     {
       dispatch(addProgram(program));

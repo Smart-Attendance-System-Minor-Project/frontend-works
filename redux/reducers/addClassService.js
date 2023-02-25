@@ -4,8 +4,13 @@ import axios from 'axios';
 const addClass = async(classInfo)=>{
     var Subjects = [];
 
-    const data = (await axios.post('http://assmnt.pcampus.edu.np/api/subjects/',classInfo)).data;
-    
+    const config = {
+		headers: {
+			'Content-Type':'multipart/form-data'
+        }
+    }
+    const data = (await axios.post('http://assmnt.pcampus.edu.np/api/subjects/',classInfo,config)).data;
+  
     if(data.length < 9 && data.length !=0)
     {
         for (var i = 0; (i < data.length); i++)
