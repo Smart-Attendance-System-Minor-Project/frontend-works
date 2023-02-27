@@ -9,6 +9,7 @@ import { record,reset } from '../redux/reducers/recordsSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { recordList } from '../redux/reducers/recordListSlice';
 import * as FileSystem from 'expo-file-system';
+import { FancyAlert } from 'react-native-expo-fancy-alerts';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
@@ -18,10 +19,10 @@ const HomeScreen = ({navigation,theme}) => {
 
  
   const [month,setmonth] = useState('');
-  
   const [year,setyear] = useState('');
+  
  
-  const [recordListAsync, setRecordListAsync] = useState([]);
+  
   
   const dispatch = useDispatch();
 
@@ -132,14 +133,14 @@ const HomeScreen = ({navigation,theme}) => {
        action='LOG_OUT'
     
        />
-        <TouchableOpacity style = {styles.View__Records} onPress={()=>openPanel()}><Text>View Records</Text></TouchableOpacity>
+        <TouchableOpacity style = {styles.View__Records} onPress={()=>openPanel()}><Text style={{color:"#fff"}}>View Records</Text></TouchableOpacity>
         <View style={styles.container}>
                    
                   
                     <SwipeablePanel {...panelProps} isActive={isPanelActive}
                     noBackgroundOpacity = {true}
                     allowTouchOutside = {true}
-                    showCloseButton = {true}
+                    showCloseButton = {false}
                     style = {[theme==='light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]}
                     barStyle = {{backgroundColor:'#29B0DB'}}
                     >
@@ -190,7 +191,7 @@ const styles = StyleSheet.create({
       justifyContent:'center',
       backgroundColor:'#29B0DB',
       borderRadius:9,
-      shadowColor:'black',
+      
       shadowOffset: {
           width: 1,
           height: 4,
@@ -214,7 +215,7 @@ const styles = StyleSheet.create({
   history__title:{
       fontSize:18,
       textAlign:'center',
-      color:'#fff'
+      color:'#000'
   },
   history__ListContainer:{
       marginTop:20
@@ -223,14 +224,15 @@ const styles = StyleSheet.create({
       display:'flex',
       flexDirection:'row',
       justifyContent:'space-around',
-      backgroundColor:'#eee',
+      backgroundColor:'#F3F3F2',
+      borderColor:'#29b0db',
       borderRadius:9,
       padding:20,
       margin:10
 
   },
   history__ListText:{
-      color:'#29B0DB'
+      color:'#000'
   }
 })
 

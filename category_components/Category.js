@@ -3,7 +3,9 @@ import React,{useState} from 'react'
 import {useDispatch} from 'react-redux'
 import { reset } from '../redux/reducers/authSlice'
 import { TouchableOpacity } from 'react-native'
+import { FancyAlert } from 'react-native-expo-fancy-alerts'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useEffect } from 'react'
 
 
 const Category = ({icon,label,numbers,action,navigation,disabled}) => {
@@ -12,6 +14,11 @@ const Category = ({icon,label,numbers,action,navigation,disabled}) => {
   Appearance.addChangeListener((scheme)=>{
    setTheme(scheme.colorScheme); 
  })
+ const [sureToLogOut,setSureToLogOut] = useState(false);
+
+    useEffect(()=>{
+
+    },[sureToLogOut])
 
     const dispatch = useDispatch()
 
@@ -26,18 +33,50 @@ const Category = ({icon,label,numbers,action,navigation,disabled}) => {
           break;
 
         case 'LOG_OUT':
-          AsyncStorage.removeItem('token')
-          AsyncStorage.removeItem('username')
-          dispatch(reset());
-          navigation.navigate('Login')
+          setSureToLogOut(true);
+         
        
         default:
           break;
        }
     }
     
+    const handleLogOutEvent =()=> 
+    {
+      AsyncStorage.removeItem('token')
+      AsyncStorage.removeItem('username')
+      dispatch(reset());
+      navigation.navigate('Login')
+    }
   return (
     <View style = {[styles.category_container]}>
+       <FancyAlert
+                  visible={sureToLogOut}
+                  icon={<View style={{
+                    flex: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#F9E060',
+                    borderRadius: 50,
+                    width: '100%',
+                  }}><Text>Alert</Text></View>}
+                  style={{ backgroundColor: 'white' }}
+                >
+                  <Text style={{ marginTop: -16, marginBottom: 32 }}>Are you sure to logout?</Text>
+                  <View style = {{display:"flex",flexDirection:'row',alignItems:'center',marginBottom:10}}>
+                    <TouchableOpacity style={styles.btn1} onPress={handleLogOutEvent}>
+                      <Text style = {{textAlign:'center'}}>Yes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btn2} onPress={()=>{setSureToLogOut(false)}}>
+                      <Text style = {{textAlign:'center',color:'white'}}>No</Text>
+                    </TouchableOpacity>
+
+                  </View>
+                
+          </FancyAlert>
+
+
       <TouchableOpacity  style = {[styles.category_buttons,theme=== 'light'?{backgroundColor:'#fff'}:{backgroundColor:'#2B2B2B'}]} onPress = {handleClick}>
         <Text style = {[styles.category__title,theme=== 'light'?{color:'#000'}:{color:'#fff'}]}>{label}</Text>
        
@@ -99,6 +138,8 @@ const styles = StyleSheet.create({
         padding:20
        
         
-    }
+    },
+    btn1:{color:'#000',borderWidth:1,padding:10,width:80,textAlign:'center',borderRadius:3,borderColor:'#29b0db'},
+    btn2:{color:'#fff',backgroundColor:'#29b0db',textAlign:'center',padding:10,width:80,marginLeft:10,borderRadius:3}
 })
 export default Category

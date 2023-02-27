@@ -5,16 +5,18 @@ import darkMode from '../styles/darkMode';
 import {login,reset,userData} from '../redux/reducers/authSlice';
 import {useSelector,useDispatch} from 'react-redux';
 import { version } from 'react';
+import CheckBox from 'expo-checkbox'
 import * as FileSystem from 'expo-file-system'
 import { recordList } from '../redux/reducers/recordListSlice';
 
 const Login = ({navigation,theme}) => {
  
    
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
     const {isLoading, isError, isSuccess, message} = useSelector(
     (state) => state.auth)
+    const [isSecureEntry,setIsSecureEntry] = useState(true);
     
     const [username,setUsername] = useState('');
     const [password,setPassword] = useState('');
@@ -25,6 +27,7 @@ const Login = ({navigation,theme}) => {
    
     useEffect(()=>{
       
+        
         async function checkStatus()
         {
            
@@ -64,6 +67,7 @@ const Login = ({navigation,theme}) => {
              
               dispatch(userData(await AsyncStorage.getItem('username')))
               navigation.navigate('Home')
+              setIsSecureEntry(true);
               dispatch(reset())
         
         }
@@ -105,27 +109,36 @@ const Login = ({navigation,theme}) => {
 
       <View style = {styles.Login__Form}>
         
-        <TextInput style = {[theme === 'light'?styles.Login__Inputs:darkMode.Login__Inputs,errorUsername?styles.textinvalid:styles.textvalid ]}
+        <Text style = {{color:'#F73C3C'}}>{message}</Text>
+        <TextInput style = {[theme === 'light'?styles.Login__Inputs:darkMode.Login__Inputs,message?styles.textinvalid:styles.textvalid ]}
         autoCorrect = {false}
         autoCapitalize = "none" placeholder='username'
         value = {username}
-        onPressIn = {()=>{setErrorUsername('')}}
+        onPressIn = {()=>{}}
         onChangeText = {(e)=>{setUsername(e)}}
         ></TextInput>
-        <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{errorUsername}</Text>
-        <TextInput style = {[theme === 'light'?styles.Login__Inputs:darkMode.Login__Inputs,errorPassword?styles.textinvalid:styles.textvalid ]}
-        label = 'label'
+        
+        <TextInput style = {[theme === 'light'?styles.Login__Inputs:darkMode.Login__Inputs,message?styles.textinvalid:styles.textvalid ]}
+        label = 'label'd
         autoCorrect = {false}
-        onPressIn = {()=>{setErrorPassword('')}}
+        onPressIn = {()=>{}}
         autoCapitalize = "none"
         placeholder="password"
-         
         value = {password}
         onChangeText = {(e)=>{setPassword(e)}}
-        secureTextEntry={true}
-       
+        secureTextEntry={isSecureEntry}
+        
         ></TextInput>
-        <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{errorPassword}</Text>
+        <View style = {styles.showPassword__Container}>
+            <CheckBox value = {!isSecureEntry} color = {'#29b0db'}
+                            onValueChange = {()=>{
+                            setIsSecureEntry(!isSecureEntry);
+                            }}
+            />
+            <Text style = {{marginLeft:10}}>Show Password</Text>
+        </View>
+       
+        {/* <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{errorPassword}</Text> */}
 
         <TouchableOpacity style = {styles.Login__Button}
         onPress = {handleLogin}
@@ -137,7 +150,7 @@ const Login = ({navigation,theme}) => {
       <View style = {styles.Login__RegisterSection}>
         <Text style = {theme === 'light'?styles.Login__Registertext:darkMode.Login__Registertext}> Don't have an account?  </Text>
             
-        <TouchableOpacity onPress = {()=>{navigation.navigate('Register')}}><Text style = {styles.Login__SignUp}>Sign up</Text></TouchableOpacity>
+        <TouchableOpacity onPress = {()=>{dispatch(reset());navigation.navigate('Register')}}><Text style = {styles.Login__SignUp}>Sign up</Text></TouchableOpacity>
 
       </View>
     
@@ -209,6 +222,13 @@ const styles = StyleSheet.create({
         padding:10,
         margin:30,
         borderRadius:3
+    },
+    showPassword__Container:{
+        display:'flex',
+        marginTop:10,
+        flexDirection:'row',
+        alignItems:'center',
+       
     },
     Login__ButtonLogin:{
         color:'#FFFFFF',

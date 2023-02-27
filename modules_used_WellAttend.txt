@@ -1,0 +1,13 @@
+Modules used so far:
+
+1. react-native-deck-swiper
+2. expo-file-system
+3. SwiperPanel
+4. react-native-fancy-alerts
+5. react-router-dom & @navigation/native
+6. expo-checkbox
+7. axios
+8. react-native-weekly-calender
+9. react-native-modal-selector
+10.react-native-select-dropdown
+11. react-redux

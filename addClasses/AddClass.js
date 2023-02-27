@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addClass,reset } from '../redux/reducers/addClassSlice';
 import { addProgram } from '../redux/reducers/programSlice';
 import SelectDropdown from 'react-native-select-dropdown'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { LoadingIndicator } from 'react-native-expo-fancy-alerts';
 const AddClass = ({navigation}) => {
 
   const [theme,setTheme] = useState(Appearance.getColorScheme());
@@ -16,13 +16,13 @@ const AddClass = ({navigation}) => {
   const [program,setProgram] = useState('');
   const [year,setYear] = useState('');
   const [part,setPart] = useState('');
-
   const dispatch = useDispatch();
 
   const {subjects,isSuccess,isLoading,isError} = useSelector(state=>state.addClass)
 
   useEffect(()=>{
 
+    
     
     if(isSuccess)
     {
@@ -34,7 +34,7 @@ const AddClass = ({navigation}) => {
 
   const year_part = ['1/1','1/2','2/1','2/2','3/1','3/2','4/1','4/2'];
  
-  const Programs = ['BCT','BCE','BME','BEL','BEX', "BEI", "BAE"];
+  const Programs = ['BCT','BCE','BME','BEL','BEX', "BEI"];
 
 
   const handleProgram = (option) =>{
@@ -79,6 +79,7 @@ const AddClass = ({navigation}) => {
   
   return (
     <View style = {[styles.AddClass__Container,theme=== 'light'?{backgroundColor:''}:{backgroundColor:'#212121'}]}>
+      <LoadingIndicator visible = {isLoading}/>
       { <View style = {styles.AddClass__Section1}>
            <SelectDropdown
               data={Programs}

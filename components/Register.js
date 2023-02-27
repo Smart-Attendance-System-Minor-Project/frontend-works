@@ -1,9 +1,10 @@
-import { View, Text,StyleSheet,Appearance,TextInput,TouchableOpacity,Image } from 'react-native'
+import { View, Text,StyleSheet,Appearance,TextInput,TouchableOpacity,Image,ActivityIndicator } from 'react-native'
 import React,{useState,useEffect} from 'react'
 import darkModeRegister from '../styles/darkModeRegister';
 import {register,reset} from '../redux/reducers/authSlice';
 import { useDispatch,useSelector } from 'react-redux';
-
+import CheckBox from 'expo-checkbox';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Register = ({navigation}) => {
 
     const [username,setUsername] = useState('');
@@ -11,7 +12,8 @@ const Register = ({navigation}) => {
     const [confirmPassword,setConfirmPassword] = useState('');
     const [email,setEmail] = useState('');
     const [fullName,setFullName] = useState('');
-    const [error,setError] = useState([]);
+    const [error,setError] = useState('');
+    const [isSecureEntry,setIsSecureEntry] = useState(true);
 
     const [theme,setTheme] = useState(Appearance.getColorScheme());
     Appearance.addChangeListener((scheme)=>{
@@ -22,22 +24,41 @@ const Register = ({navigation}) => {
         (state) => state.auth)
 
      const dispatch = useDispatch();
-     const items = {};
+
 
    
 
     useEffect(()=>{
    
+        
+        async function registrationStatus()
+        {
+            setError(await AsyncStorage.getItem('unsuccessRegister'));  
+            await AsyncStorage.removeItem('unsuccessRegister');
 
-        if(isSuccess) {
-           
+            if(isSuccess) {
+                const recordFileDirUri = FileSystem.documentDirectory + `AttendanceRecords_${username}`;
+                try {
+                  const recordsPresent = await FileSystem.readDirectoryAsync(recordFileDirUri);
+                  if(recordsPresent) 
+                  {   
+                    
+                    
+                    dispatch(recordList(recordsPresent))
           
-            navigation.navigate('Home')
-          }
-          
-          dispatch(reset())
-    
+                  }
+                 
 
+                } catch (error) {
+                  await FileSystem.makeDirectoryAsync(recordFileDirUri);
+                  console.log("Directory has been created")
+                }
+                navigation.navigate('Home');
+                dispatch(reset())
+              }
+        }
+
+        registrationStatus();
 
     },[isLoading, isError,isSuccess,message,dispatch])
 
@@ -74,23 +95,26 @@ const Register = ({navigation}) => {
        <View style = {styles.Register__LogoContainer}>
          <Image source={theme === 'light'?require('../pictures/Logos/LOGO_WA_BGT_LIGHT.png'):require('../pictures/Logos/LOGO_WA_BGT_DARK.png')} style = {styles.Register__Logo} /> 
       </View>
-
+      {isLoading && <ActivityIndicator size="large" color="#29b0db" />}
+     
       <View style = {styles.Register__Form}>
+
+        <Text style = {{color:'#F73C3C',textAlign:'center'}}>{message}</Text>
         
-        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,error[0]?styles.textinvalid:styles.textvalid ]}
+        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,message?styles.textinvalid:styles.textvalid ]}
         autoCorrect = {false}
         autoCapitalize = "words" placeholder='Full Name'
         value = {fullName}
-        onPressIn = {()=>{}}
+        onPressIn = {()=>{setError('')}}
         onChangeText = {(e)=>{setFullName(e)}}
         ></TextInput>
-        <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{error[0]}</Text>
+       
        
         {/* These are actually the inputs taken */}
-        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,error[1]?styles.textinvalid:styles.textvalid ]}
+        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,message?styles.textinvalid:styles.textvalid ]}
         label = 'label'
         autoCorrect = {false}
-        onPressIn = {()=>{}}
+        onPressIn = {()=>{setError('')}}
         autoCapitalize = "none"
         placeholder="Email Address"
         value = {email}
@@ -98,52 +122,57 @@ const Register = ({navigation}) => {
         secureTextEntry={false}
         ></TextInput>
         <Text style = {{color:'#9CA8BD',marginTop:'1%'}}>Please use your campus email id</Text>
-        <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{error[1]}</Text>
+       
         
 
-        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,error[2]?styles.textinvalid:styles.textvalid ]}
+        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,message?styles.textinvalid:styles.textvalid ]}
         label = 'label'
         autoCorrect = {false}
-        onPressIn = {()=>{}}
+        onPressIn = {()=>{setError('')}}
         autoCapitalize = "none"
         placeholder="Username"
         value = {username}
         onChangeText = {(e)=>{setUsername(e)}}
         secureTextEntry={false}
         ></TextInput>
-        <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{error[2]}</Text>
+       
 
-        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,error[3]?styles.textinvalid:styles.textvalid ]}
+        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,message?styles.textinvalid:styles.textvalid ]}
         label = 'label'
         autoCorrect = {false}
-        onPressIn = {()=>{}}
+        onPressIn = {()=>{setError('')}}
         autoCapitalize = "none"
         placeholder="Password"
         value = {password}
         onChangeText = {(e)=>{setPassword(e)}}
-        secureTextEntry={false}
+        secureTextEntry={isSecureEntry}
         ></TextInput>
-        <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{error[3]}</Text>
+       
 
-        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,error[3]?styles.textinvalid:styles.textvalid ]}
+        <TextInput style = {[theme === 'light'?styles.Register__Inputs:darkModeRegister.Register__Inputs,message?styles.textinvalid:styles.textvalid ]}
         label = 'label'
         autoCorrect = {false}
-        onPressIn = {()=>{}}
+        onPressIn = {()=>{setError('')}}
         autoCapitalize = "none"
         placeholder="Confirm Password"
         value = {confirmPassword}
         onChangeText = {(e)=>{setConfirmPassword(e)}}
-        secureTextEntry={false}
+        secureTextEntry={isSecureEntry}
         ></TextInput>
-        <Text style = {{color:'#F73C3C',marginLeft:'-44%'}}>{error[4]}</Text>
+       
+       {/* button to show or hide password */}
+        <View style = {styles.showPassword__Container}>
+            <CheckBox value = {!isSecureEntry} color = {'#29b0db'}
+                            onValueChange = {()=>{
+                            setIsSecureEntry(!isSecureEntry);
+                            }}
+            />
+            <Text style = {{marginLeft:10}}>Show Password</Text>
+        </View>
 
-      
-
-        
-
+        {/* button to register */}
         <TouchableOpacity style = {styles.Register__Button}
-        onPress = {handleRegister}
-        >
+        onPress = {handleRegister}>
             <Text style = {styles.Register__ButtonRegister}>Register</Text>
         </TouchableOpacity>
       </View>
@@ -191,6 +220,13 @@ const styles = StyleSheet.create({
       borderWidth:1,
       borderColor: '#F73C3C',
   },
+  showPassword__Container:{
+    display:'flex',
+    marginTop:10,
+    flexDirection:'row',
+    alignItems:'center',
+   
+},
   Register__Form:{
       marginTop:-20,
       display:'flex',

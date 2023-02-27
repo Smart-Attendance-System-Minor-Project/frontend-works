@@ -8,6 +8,7 @@ import {classList,reset} from '../redux/reducers/classListSlice'
 import { fetchStudent } from '../redux/reducers/fetchStudentSlice'
 import * as FileSystem from 'expo-file-system'
 import axios from 'axios'
+import { LoadingIndicator } from 'react-native-expo-fancy-alerts'
 
 
 
@@ -18,7 +19,7 @@ const ChooseSubject = ({navigation}) => {
   const batchList = ['075','076','077','078'];
   
 
-  
+  const [loading,setIsLoading] = useState(false);
   const [batch,setBatch] = useState('');
   const [section,setSection] = useState('');
   const [subSelected,setSubSelected] = useState('');
@@ -26,10 +27,10 @@ const ChooseSubject = ({navigation}) => {
     'BCT':['AB','CD'],
     'BCE':['AB','CD','EF','GH'],
     'BME':['AB'],
-    'BAR':['AB'],
     'BEL':['AB'],
     'BEX':['AB'],
-    'BEI':['AB']
+    'BEI':['AB'],
+    
     
 
   };
@@ -68,10 +69,11 @@ const ChooseSubject = ({navigation}) => {
 
     
     
-  },[isSuccess,isLoading,isError])
+  },[isSuccess,isLoading,isError,loading])
   const handleClass= async()=>{
 
- 
+    
+    setIsLoading(true);
     if(batch && section && subSelected)
     {
       let classPrefix = subSelected + ' - ' + batch+program+section;
@@ -114,6 +116,7 @@ const ChooseSubject = ({navigation}) => {
       }
       dispatch(classList(updatedClasses));
       dispatch(reset())
+      setIsLoading(false);
 
       
   
@@ -158,6 +161,7 @@ const ChooseSubject = ({navigation}) => {
 
   return (
     <View style = {styles.ChooseClass__ContainerW}>
+      <LoadingIndicator visible = {loading}/>
       <View>
         <Image source={require('../pictures/subjects_logo/computer_logo.png')}style = {styles.Subject__Logo}/>
       </View>

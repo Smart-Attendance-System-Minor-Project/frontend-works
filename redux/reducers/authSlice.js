@@ -19,9 +19,7 @@ export const userData = createAsyncThunk('auth/user',async (user,thunkAPI)=>{
     try {
         return user
     } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) 
-        || error.message || error.toString()
-      
+        
         return thunkAPI.rejectWithValue(message)
     }
 })
@@ -29,29 +27,21 @@ export const userData = createAsyncThunk('auth/user',async (user,thunkAPI)=>{
 //Register user
 export const register = createAsyncThunk('auth/register',async (user,thunkAPI)=>{
     try {
+        AsyncStorage.removeItem('unsuccessRegister')
         return await authService.register(user);
     } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) 
-        || error.message || error.toString()
-      
-        return thunkAPI.rejectWithValue(message)
+       
+        return thunkAPI.rejectWithValue(error.response.data.error)
     }
 })
 export const login = createAsyncThunk('auth/login',async (user, thunkAPI) => {
 
-    try {       
-            AsyncStorage.removeItem('errorUsername')
-            AsyncStorage.removeItem('errorPassword')
+    try {           
             return await authService.login(user);
-           
 
     } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) 
-        || error.message || error.toString()
 
-        AsyncStorage.setItem('errorUsername','username_error')
-        AsyncStorage.setItem('errorPassword','password_error')
-        return thunkAPI.rejectWithValue(message)
+        return thunkAPI.rejectWithValue(error.response.data.error)
     }
 })
 

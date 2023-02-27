@@ -22,6 +22,8 @@ const AttendanceScreen = ({navigation}) => {
     const [isLoading,setIsLoading] = useState(false);
     const [reviewBool,setReviewBool] = useState(false);
     const [refresh,setRefresh] = useState(false);
+    const [sureToMarkAll,setSureToMarkAll] = useState(false);
+    const [sureToCancel,setSureToCancel] = useState(false);
     var recordLists = new Object();
     var TodayRecord = new Object();
    
@@ -44,7 +46,7 @@ const AttendanceScreen = ({navigation}) => {
       }
       getStudentsForAttendance();
       
-    },[visible,isLoading,reviewBool,refresh])
+    },[visible,isLoading,reviewBool,refresh,sureToMarkAll])
 
 
     const presentStudentsHandler = (student) =>{
@@ -71,13 +73,16 @@ const AttendanceScreen = ({navigation}) => {
     }
 
     const handleAllPresent =async()=>{
+      setSureToMarkAll(false);
       students.map(student=>{
         recordLists[student] = "P";
       })
-
-      
-      
       handleTodayRecord(recordLists);
+    }
+
+    const handleCancelEvent =()=> {
+      setSureToCancel(false);
+      navigation.navigate('Home');
     }
 
     
@@ -108,6 +113,7 @@ const AttendanceScreen = ({navigation}) => {
       }
 
       //console.log(recordLists)
+      
       const response = await axios.post('https://prat051.pythonanywhere.com/attendance/save_record/',AttendanceRecord);
       // console.log(response);
       //Code upto here
@@ -115,13 +121,14 @@ const AttendanceScreen = ({navigation}) => {
 
       try {
         const pastRecords = JSON.parse(await FileSystem.readAsStringAsync(recordFileDirUri,{encoding:FileSystem.EncodingType.UTF8}));
-        
+
         pastRecords[TodayDate] = {
           ClassType: (classN.split(' - ')[1]).slice(6,8).length == 1?"P":"L",
           Group:(classN.split(' - ')[1]).slice(6,8),
           Records:recordLists
         }
 
+       
        
         await FileSystem.writeAsStringAsync(recordFileDirUri,JSON.stringify(pastRecords), { encoding: FileSystem.EncodingType.UTF8 });
         console.log("Record successfully added!")
@@ -165,10 +172,10 @@ const AttendanceScreen = ({navigation}) => {
             </View>
             <View style = {styles.AttendanceScreen__Infos}>
          
-                <Text>{TodayDate}</Text>
-              
-                <Text style = {{backgroundColor:'#fff',padding:4}}>Present {presentCount}</Text>
-                <Text style = {{backgroundColor:'#fff',padding:4}}>Absent {absentCount}</Text>
+                <Text style = {{textAlign:'center'}}>{TodayDate}</Text>
+                
+                {/* <Text style = {{backgroundColor:'#fff',padding:4}}>Present {presentCount}</Text>
+                <Text style = {{backgroundColor:'#fff',padding:4}}>Absent {absentCount}</Text> */}
                 
                
             </View>
@@ -248,17 +255,42 @@ const AttendanceScreen = ({navigation}) => {
             
             <View style = {styles.AttendanceScreen__Buttons}>
                   <TouchableOpacity style = {styles.ClassSelection__Button1}
-                  onPress = {handleAllPresent}
+                  onPress = {()=>{setSureToMarkAll(true)}}
                   >
                       <Text style = {{color:'white'}}>Mark All Present</Text>
                   </TouchableOpacity>
                   <TouchableOpacity style = {styles.ClassSelection__Button2} onPress = {()=>{
                     //alert("Are you sure want to cancel the attendance? Terminating won't save any data you took so far")
-                    navigation.navigate("Home")
+                    setSureToCancel(true)
                   }}>
                       <Text>Cancel</Text>
                   </TouchableOpacity>
             </View>
+            <FancyAlert
+                  visible={sureToMarkAll}
+                  icon={<View style={{
+                    flex: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#F9E060',
+                    borderRadius: 50,
+                    width: '100%',
+                  }}><Text>Alert</Text></View>}
+                  style={{ backgroundColor: 'white' }}
+                >
+                  <Text style={{ marginTop: -16, marginBottom: 32,textAlign:'center' }}>Every student will be marked present.    Are you sure for this?</Text>
+                  <View style = {{display:"flex",flexDirection:'row',alignItems:'center',marginBottom:10}}>
+                    <TouchableOpacity style={styles.btn1} onPress={handleAllPresent}>
+                      <Text style = {{textAlign:'center'}}>Yes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btn2} onPress={()=>{setSureToMarkAll(false)}}>
+                      <Text style = {{textAlign:'center',color:'white'}}>No</Text>
+                    </TouchableOpacity>
+
+                  </View>
+                
+          </FancyAlert>
 
 
             <FancyAlert
@@ -276,8 +308,33 @@ const AttendanceScreen = ({navigation}) => {
                 >
                   <Text style={{ marginTop: -16, marginBottom: 32 }}>Attendance record saved successfully!</Text>
                   <TouchableOpacity style={styles.btn} onPress={handleAlertEvent}>
-                     <Text style={{color:'#fff'}}>Great</Text>
+                     <Text style={{color:'#fff'}}>Ok</Text>
                   </TouchableOpacity>
+            </FancyAlert>
+
+            <FancyAlert
+                  visible={sureToCancel}
+                  icon={<View style={{
+                    flex: 1,
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    backgroundColor: '#F9E060',
+                    borderRadius: 50,
+                    width: '100%',
+                  }}><Text>Alert</Text></View>}
+                  style={{ backgroundColor: 'white' }}
+                >
+                  <Text style={{ marginTop: -16, marginBottom: 32,textAlign:'center' }}>Are you sure to cancel?                     Current session won't be saved.</Text>
+                  <View style = {{display:"flex",flexDirection:'row',alignItems:'center',marginBottom:10}}>
+                    <TouchableOpacity style={styles.btn1} onPress={handleCancelEvent}>
+                      <Text style = {{textAlign:'center'}}>Yes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.btn2} onPress={()=>{setSureToCancel(false)}}>
+                      <Text style = {{textAlign:'center',color:'white'}}>No</Text>
+                    </TouchableOpacity>
+
+                  </View>
             </FancyAlert>
 
             <FancyAlert
@@ -317,11 +374,10 @@ const AttendanceScreen = ({navigation}) => {
                     </ScrollView>
 
                     <TouchableOpacity style={styles.btn} onPress={()=>handleReviewEvent(studentList)}>
-                     <Text style={{color:'#fff'}}>All Good</Text>
+                     <Text style={{color:'#fff'}}>Confirm</Text>
                     </TouchableOpacity>
 
                   </View>
-                 
                  
             </FancyAlert>
           
@@ -361,7 +417,7 @@ const styles = StyleSheet.create({
     display:'flex',
     width:'80%',
     flexDirection:'row',
-    justifyContent:'space-between',
+    justifyContent:'center',
     marginTop:30,
     alignItems:'center'
     
@@ -460,7 +516,9 @@ const styles = StyleSheet.create({
    flexDirection:'row',
    justifyContent:'space-between',
    alignItems:'center',
-   margin:10}
+   margin:10},
+   btn1:{color:'#000',borderWidth:1,padding:10,width:80,textAlign:'center',borderRadius:3,borderColor:'#29b0db'},
+   btn2:{color:'#fff',backgroundColor:'#29b0db',textAlign:'center',padding:10,width:80,marginLeft:10,borderRadius:3}
 })
 
 export default AttendanceScreen

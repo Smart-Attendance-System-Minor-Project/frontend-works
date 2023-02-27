@@ -7,6 +7,8 @@ const register = async(userData)=>{
 
     if(response.data)
     {
+        
+        await AsyncStorage.setItem('username',userData.username);
         return response.data;
     }
 }
@@ -20,7 +22,7 @@ const login = async (userData) => {
             AsyncStorage.setItem("token",response.data.success)
             await AsyncStorage.setItem('username',userData.username);
            }
-    
+           
            return response.data
 
 }

@@ -21,6 +21,8 @@ const ViewRecords = ({navigation}) => {
   const [classType,setClassType] = useState('');
   const [Group,setGroup] = useState('');
   const [student,setStudent] = useState([]);
+  const [studentName,setStudentName] = useState([]);
+  const [studentRollNo,setStudentRollNo] = useState([]);
   const [heightARR,setheightARR] = useState([]);
   const [widthARR1,setwidthARR1] = useState([]);  
   const [widthARR2,setwidthARR2] = useState([]);  
@@ -38,7 +40,7 @@ const ViewRecords = ({navigation}) => {
 
   async function getStudent()
   {
-    setRefresh(true);
+    
     const fileUriStudents = FileSystem.documentDirectory +  `${user}_studentList.json`;
 
     try {
@@ -54,7 +56,16 @@ const ViewRecords = ({navigation}) => {
 
       }
       setheightARR(temp_heightList)
-      setStudent(studentData[classID])
+      var studentName = [];
+      var studentRollNo = [];
+
+      setStudent(studentData[classID]);
+      studentData[classID].map(eachStudent =>{
+        studentName.push(eachStudent.split(' - ')[0]);
+        studentRollNo.push(eachStudent.split(' - ')[1]);
+      })
+      setStudentName(studentName);
+      setStudentRollNo(studentRollNo);
 
 
     } catch (error) {
@@ -75,8 +86,8 @@ const ViewRecords = ({navigation}) => {
     for(var i = 0 ; i < tableHead2.length ; i++)
     {
      
-      widthArr1TempList.push(85)
-      widthArr2TempList.push(85)
+      widthArr1TempList.push(100)
+      widthArr2TempList.push(100)
       //console.log(Object.keys(record[tableHead2[i]]['Records']).length)
       for (var j = 0 ; j < (Object.keys(record[tableHead2[i]]['Records']).length);j++)
       {
@@ -84,7 +95,7 @@ const ViewRecords = ({navigation}) => {
           if(i != 0)
           {
             
-            tempRecord[j].push(record[tableHead2[i]]['Records'][student[j]])
+            tempRecord[j].push((record[tableHead2[i]]['Records'][student[j]]))
           }
           else
           {
@@ -99,12 +110,13 @@ const ViewRecords = ({navigation}) => {
     }
   
    
-    widthArr1TempList.unshift(270)
+    widthArr1TempList.unshift(100)
+    widthArr1TempList.unshift(250)
     setwidthARR1(widthArr1TempList)
     setwidthARR2(widthArr2TempList)
     setTableData(tempRecord)
+    tableHead2.unshift('Roll Number')
     tableHead2.unshift('Name')
-
     setTableHeads(tableHead2)
 
     setTimeout(() => {
@@ -129,14 +141,15 @@ const ViewRecords = ({navigation}) => {
       
           <ScrollView horizontal = {true} vertical = {true}  
       >
-            <View>
+            {/* <View>
              <Text>{classType}</Text>
-            </View>
+            </View> */}
               <View style={styles.container}>
                 <Table borderStyle={{borderWidth: 2, borderColor: '#c8e1ff'}} >
                   <Row data={tableHeads} style={styles.head} widthArr = {widthARR1} textStyle = {styles.text }/>
                   <TableWrapper style={styles.wrapper}>
-                    <Col data={student} style={styles.title} heightArr={heightARR} textStyle={styles.text2}/>
+                    <Col data={studentName} style={styles.title} heightArr={heightARR} width = {250} textStyle={styles.text2}/>
+                    <Col data={studentRollNo} style={styles.title} heightArr={heightARR} width = {100}  textStyle={styles.text2}/>
                     <Rows data={tableData}  style={styles.row} widthArr={widthARR2} textStyle={styles.text}/>
                   </TableWrapper>
                 </Table>
@@ -156,9 +169,9 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, paddingTop: 30, backgroundColor: '#fff' },
   head: {  height: 30,  backgroundColor: '#f1f8ff' },
   wrapper: { display:'flex',flexDirection: 'row' },
-  title: { flex: 1, backgroundColor: '#f6f8fa',width:270 },
-  row: {  height: 28 },
+  title: { flex: 1, backgroundColor: '#fff',width:250 },
+  row: {  height: 28,marginLeft:-150 },
   text: { textAlign: 'center' },
-  text2:{textAlign:'left'}
+  text2:{textAlign:'center'}
 });
 export default ViewRecords
