@@ -87,7 +87,12 @@ const ChooseSubject = ({navigation}) => {
         class_type:section.length == 1?'P':'L'
       }
 
-      const response = await axios.post('https://prat051.pythonanywhere.com/attendance/add_class/',newClass);
+      const config = {
+        headers: { Authorization: `Bearer ${await AsyncStorage.getItem('token')}` }
+      };
+      
+
+      const response = await axios.post('https://wellattend.pythonanywhere.com/attendance/add_class/',newClass,config);
       
       const fileUri = FileSystem.documentDirectory + `${user}_classList.json`;
       try {

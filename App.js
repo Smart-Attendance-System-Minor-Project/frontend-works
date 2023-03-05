@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import Login from './components/Login';
 import Register from './components/Register';
 import HomeScreen from './components/HomeScreen';
@@ -14,12 +14,8 @@ import ChooseClass from './takeAttendance/ChooseClass';
 import ChooseSubject from './addClasses/ChooseSubject';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-var Datastore = require('react-native-local-mongodb');
-import { useSelector } from 'react-redux';
 import AddClass from './addClasses/AddClass';
 import AttendanceScreen from './takeAttendance/AttendanceScreen';
-import * as FileSystem from 'expo-file-system'
 import {
   SafeAreaView,
   ScrollView,
@@ -38,10 +34,17 @@ import {
 
 import { NavigationContainer, StackActions } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import ForgotPassword from './components/ForgotPassword';
+import ForgotPassword from './components/forgetPassword/ForgotPassword';
+import OTPValidate from './components/forgetPassword/OTPValidate';
+import EnterNewPassword from './components/forgetPassword/EnterNewPassword';
 import FetchStudents from './addClasses/FetchStudents';
-import { useEffect } from 'react';
 import ViewRecords from './AttendanceRecords/ViewRecords';
+
+//net info checks the network status of device: offline, online (Wifi or Cellular (2g,3g,4g,5g))
+import NetInfo from '@react-native-community/netinfo';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 /* $FlowFixMe[missing-local-annot] The type annotation(s) required by Flow's
  * LTI update could not be added via codemod */
@@ -53,6 +56,7 @@ const App = () => {
 
   
   const [theme,setTheme] = useState(Appearance.getColorScheme());
+  const [isOnline,setIsOnline] = useState(null);
   Appearance.addChangeListener((scheme)=>{
    setTheme(scheme.colorScheme); 
 
@@ -64,11 +68,16 @@ const App = () => {
   //   const data='';
   //   await FileSystem.writeAsStringAsync(fileUri,data,{ encoding: FileSystem.EncodingType.UTF8 });
   // }
-
+  NetInfo.addEventListener(async(state) => {
+    console.log('Connection type', state.type);
+    console.log('Is connected?', state.isConnected);
+    await AsyncStorage.setItem("connection",JSON.stringify(state.isConnected));
+  });
   
 
  useEffect(()=>{
   
+ 
 
  },[])
 
@@ -163,11 +172,28 @@ const App = () => {
         </Stack.Screen>
 
         <Stack.Screen name = "View Records" options = {{headerStyle:{backgroundColor:'#29B0DB'},
-       title:'Your Records',
-       gestureEnabled:false,
+        title:'Your Records',
+        gestureEnabled:false,
        
         headerTintColor: '#fff'}}>
         {(props) => <ViewRecords {...props} theme = {theme}/>} 
+        </Stack.Screen>
+
+
+        <Stack.Screen name = "OTP Validation" options = {{headerStyle:{backgroundColor:'#29B0DB'},
+        title:'Your Records',
+        gestureEnabled:false,
+        headerBackVisible:false,
+        headerTintColor: '#fff'}}>
+        {(props) => <OTPValidate {...props} theme = {theme}/>} 
+        </Stack.Screen>
+
+        <Stack.Screen name = "Enter NewPassword" options = {{headerStyle:{backgroundColor:'#29B0DB'},
+        title:'New Password',
+        gestureEnabled:false,
+        headerBackVisible:false,
+        headerTintColor: '#fff'}}>
+        {(props) => <EnterNewPassword {...props} theme = {theme}/>} 
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

@@ -26,6 +26,7 @@ const HomeScreen = ({navigation,theme}) => {
   
   const dispatch = useDispatch();
 
+  const [status,setStatus] = useState(null);
   const {user} = useSelector(state=>state.auth)
   const {isSuccess} = useSelector(state=>state.records)
   const {recordLists} = useSelector(state=>state.recordList)
@@ -48,10 +49,12 @@ const HomeScreen = ({navigation,theme}) => {
         
 
   useEffect(()=>{
+    
     async function getClass()
     {
      
       //await FileSystem.deleteAsync(FileSystem.documentDirectory + `AttendanceRecords_${user}`)
+      setStatus(await AsyncStorage.getItem("connection"));
       const currDate = new Date();
       setmonth(currDate.toLocaleString('default', { month: 'short' }));
       setyear(currDate.getFullYear());
@@ -118,7 +121,12 @@ const HomeScreen = ({navigation,theme}) => {
   return (
     <View style= {theme === 'light'?styles.HomeScreen__Container:darkModeHS.HomeScreen__Container}>
        <WeekCalendar theme = {theme}/>
-       <Text style = {theme === 'light'?styles.HomeScreen__Category:darkModeHS.HomeScreen__Category}>CATEGORIES</Text>
+      
+       <View style = {styles.titles}>
+        <Text style = {theme === 'light'?styles.HomeScreen__Category:darkModeHS.HomeScreen__Category}>CATEGORIES</Text>
+        <Text style = {status === "true"?styles.HomeScreen__StatusOnline:styles.HomeScreen__StatusOffline}>{status === "true"?"Online":"Offline"}</Text>
+       </View>
+       
        <Category label = {'Take Attendance'} 
        navigation = {navigation} 
        action = 'TAKE_ATTENDANCE'
@@ -155,14 +163,15 @@ const HomeScreen = ({navigation,theme}) => {
                                         <TouchableOpacity key={eachRecord} style = {styles.history__List} onPress = {()=>handleRecord(eachRecord)}>
                                             <Text style = {styles.history__ListText}>{(eachRecord.split('.')[0]).split('_')[1]}</Text>
                                             <Text style = {styles.history__ListText}>{(eachRecord.split('.')[0]).split('_')[0]}</Text>
-                                        </TouchableOpacity>
+                                        </TouchableOpacity> 
                                     )
                                 })}
                             </View>    
                         </ScrollView>   
                         
                     </SwipeablePanel> 
-                </View>
+        </View>
+       
            
     </View>
   )
@@ -176,10 +185,13 @@ const styles = StyleSheet.create({
     },
   
     HomeScreen__Category:{
-      color:'#C9C8C8',
-      marginTop:50,
-      marginLeft:20,
-      
+      color:'#C9C8C8',  
+    },
+    HomeScreen__StatusOnline:{
+      color:'green',  
+    },
+    HomeScreen__StatusOffline:{
+      color:'yellow',  
     },
     View__Records:{
      marginTop:20,
@@ -233,6 +245,16 @@ const styles = StyleSheet.create({
   },
   history__ListText:{
       color:'#000'
+  },
+  titles:{
+    display:'flex',
+    flexDirection:'row',
+    justifyContent:'space-between',
+    alignItems:'center',
+    marginTop:50,
+    marginLeft:20,
+    marginRight:20
+    
   }
 })
 

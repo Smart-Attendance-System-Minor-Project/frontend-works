@@ -113,8 +113,11 @@ const AttendanceScreen = ({navigation}) => {
       }
 
       //console.log(recordLists)
+      const config = {
+        headers: { Authorization: `Bearer ${await AsyncStorage.getItem('token')}` }
+      };
       
-      const response = await axios.post('https://prat051.pythonanywhere.com/attendance/save_record/',AttendanceRecord);
+      const response = await axios.post('https://wellattend.pythonanywhere.com/attendance/save_record/',AttendanceRecord,config);
       // console.log(response);
       //Code upto here
 
@@ -129,6 +132,7 @@ const AttendanceScreen = ({navigation}) => {
         }
 
        
+        //console.log((pastRecords))
        
         await FileSystem.writeAsStringAsync(recordFileDirUri,JSON.stringify(pastRecords), { encoding: FileSystem.EncodingType.UTF8 });
         console.log("Record successfully added!")
