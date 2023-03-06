@@ -59,6 +59,7 @@ const HomeScreen = ({navigation,theme}) => {
       setmonth(currDate.toLocaleString('default', { month: 'short' }));
       setyear(currDate.getFullYear());
       
+      console.log("This is user",user);
       const fileUri = FileSystem.documentDirectory +  `${user}_classList.json`;
      
       var Classes = [];

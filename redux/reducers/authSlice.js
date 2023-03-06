@@ -12,8 +12,17 @@ const initialState = {
     isSuccess: false,
     isLoading: false,
     message: '',
-    user: ''
+    user: '',
+    email:''
 }
+
+export const saveEmail = createAsyncThunk('auth/saveEmail',async(email,thunkAPI)=>{
+    try {
+        return email
+    } catch (error) {
+        return thunkAPI.rejectWithValue();
+    }
+})
 
 export const userData = createAsyncThunk('auth/user',async (user,thunkAPI)=>{
     try {
@@ -27,7 +36,8 @@ export const userData = createAsyncThunk('auth/user',async (user,thunkAPI)=>{
 //Register user
 export const register = createAsyncThunk('auth/register',async (user,thunkAPI)=>{
     try {
-        AsyncStorage.removeItem('unsuccessRegister')
+        //await AsyncStorage.removeItem('unsuccessRegister')
+        console.log(user)
         return await authService.register(user);
     } catch (error) {
        
@@ -59,7 +69,7 @@ export const authSlice = createSlice({
             state.message = ''
             AsyncStorage.removeItem('errorUsername')
             AsyncStorage.removeItem('errorPassword')
-           
+            
            
         }
     },
@@ -87,6 +97,7 @@ export const authSlice = createSlice({
         .addCase(register.fulfilled,(state,action)=>{
             state.isLoading = false
             state.isSuccess = true
+            
            
         })
         .addCase(register.rejected,(state,action) => {
@@ -98,6 +109,9 @@ export const authSlice = createSlice({
         })
         .addCase(userData.fulfilled,(state,action)=>{
             state.user = action.payload
+        })
+        .addCase(saveEmail.fulfilled,(state,action)=>{
+            state.email = action.payload
         })
        
      

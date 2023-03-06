@@ -28,7 +28,6 @@ const ChooseSubject = ({navigation}) => {
     'BCE':['AB','CD','EF','GH'],
     'BME':['AB'],
     'BEL':['AB'],
-    'BEX':['AB'],
     'BEI':['AB'],
     
     

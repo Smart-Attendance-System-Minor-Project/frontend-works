@@ -9,6 +9,7 @@ import axios from 'axios';
 import CheckBox from 'expo-checkbox'
 import { FancyAlert,LoadingIndicator } from 'react-native-expo-fancy-alerts';
 import { record } from '../redux/reducers/recordsSlice';
+import moment from 'moment/moment';
 
 
 const AttendanceScreen = ({navigation}) => {
@@ -37,7 +38,10 @@ const AttendanceScreen = ({navigation}) => {
       {
 
           const currDate = new Date();
-          setDate(currDate.toLocaleString('default', { month:'2-digit' ,day:'2-digit', year:'numeric' }));
+          console.log(moment().format('MM/DD/YYYY'))
+          setDate(moment().format('MM/DD/YYYY'))
+          //console.log(currDate.toLocaleString('default', { month:'2-digit' ,day:'2-digit', year:'numeric' }));
+          //setDate(currDate.toLocaleString('default', { month:'2-digit' ,day:'2-digit', year:'numeric' }));
           let className = await AsyncStorage.getItem('class_');
           setClassN(className);
           //console.log(visible,isLoading)
@@ -329,7 +333,7 @@ const AttendanceScreen = ({navigation}) => {
                   }}><Text>Alert</Text></View>}
                   style={{ backgroundColor: 'white' }}
                 >
-                  <Text style={{ marginTop: -16, marginBottom: 32,textAlign:'center' }}>Are you sure to cancel?                     Current session won't be saved.</Text>
+                  <Text style={{ marginTop: -16, marginBottom: 32,textAlign:'center' }}>Are you sure to cancel?</Text>
                   <View style = {{display:"flex",flexDirection:'row',alignItems:'center',marginBottom:10}}>
                     <TouchableOpacity style={styles.btn1} onPress={handleCancelEvent}>
                       <Text style = {{textAlign:'center'}}>Yes</Text>

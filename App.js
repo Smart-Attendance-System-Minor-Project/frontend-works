@@ -8,7 +8,6 @@
 
 import React,{useState,useEffect} from 'react';
 import Login from './components/Login';
-import Register from './components/Register';
 import HomeScreen from './components/HomeScreen';
 import ChooseClass from './takeAttendance/ChooseClass';
 import ChooseSubject from './addClasses/ChooseSubject';
@@ -43,6 +42,9 @@ import ViewRecords from './AttendanceRecords/ViewRecords';
 //net info checks the network status of device: offline, online (Wifi or Cellular (2g,3g,4g,5g))
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import RegisterEmailEnter from './components/RegisterComponents/RegisterEmailEnter';
+import RegisterOTP from './components/RegisterComponents/RegisterOTP';
+import RegisterCreateUser from './components/RegisterComponents/RegisterCreateUser';
 
 
 
@@ -93,24 +95,47 @@ const App = () => {
       
       <NavigationContainer>
       
-      <Stack.Navigator initialRouteName = 'Login' 
-     
-
-      
-      >
+      <Stack.Navigator initialRouteName = 'Login' >
         <Stack.Screen name = "Login" options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}> 
       
           {(props) => <Login {...props} theme = {theme}/>} 
         
         </Stack.Screen>
+
+        <Stack.Screen name = "Register OTPValidate" options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+          title: "Verfiy OTP"  
+          }}> 
+      
+          {(props) => <RegisterOTP {...props} theme = {theme}/>} 
         
-        <Stack.Screen name = "Register"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+        </Stack.Screen>
+
+        <Stack.Screen name = "Register CreateUser" options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+          title: "Create User"  
+          }}> 
+      
+          {(props) => <RegisterCreateUser {...props} theme = {theme}/>} 
+        
+        </Stack.Screen>
+
+        <Stack.Screen name = "Register EmailEnter" options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
+      title: "Email Verify"  
+      }}> 
+      
+          {(props) => <RegisterEmailEnter {...props} theme = {theme}/>} 
+        
+        </Stack.Screen>
+
+       
+
+        
+        {/* <Stack.Screen name = "Register"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff',
         headerBackVisible:false,
         gestureEnabled:false,
       }}>
 
               {(props) => <Register {...props} theme = {theme}/>} 
-        </Stack.Screen>
+        </Stack.Screen> */}
         <Stack.Screen name = "ForgotPassword"  options = {{headerStyle:{backgroundColor:'#29B0DB'}, headerTintColor: '#fff'}}>
 
         {(props) => <ForgotPassword {...props} theme = {theme}/>} 
@@ -150,14 +175,6 @@ const App = () => {
        headerBackVisible:false,
        gestureEnabled:false,
        left:null,
-        headerLeft: ()=>(
-          <Button
-          onPress={()=>alert("You pressed it")}
-          title = {''}
-          color = '#fff'
-          
-          ></Button>
-        ),
       
         headerTintColor: '#fff'}}>
         {(props) => <HomeScreen {...props} theme = {theme}/>} 
@@ -187,6 +204,14 @@ const App = () => {
         headerTintColor: '#fff'}}>
         {(props) => <OTPValidate {...props} theme = {theme}/>} 
         </Stack.Screen>
+
+        {/* <Stack.Screen name = "OTP for Email" options = {{headerStyle:{backgroundColor:'#29B0DB'},
+        title:'OTP',
+        gestureEnabled:false,
+        headerBackVisible:false,
+        headerTintColor: '#fff'}}>
+        {(props) => <OTPforEmail {...props} theme = {theme}/>} 
+        </Stack.Screen> */}
 
         <Stack.Screen name = "Enter NewPassword" options = {{headerStyle:{backgroundColor:'#29B0DB'},
         title:'New Password',

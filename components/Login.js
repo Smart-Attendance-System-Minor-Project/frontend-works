@@ -150,7 +150,7 @@ const Login = ({navigation,theme}) => {
       <View style = {styles.Login__RegisterSection}>
         <Text style = {theme === 'light'?styles.Login__Registertext:darkMode.Login__Registertext}> Don't have an account?  </Text>
             
-        <TouchableOpacity onPress = {()=>{dispatch(reset());navigation.navigate('Register')}}><Text style = {styles.Login__SignUp}>Sign up</Text></TouchableOpacity>
+        <TouchableOpacity onPress = {()=>{dispatch(reset());navigation.navigate('Register EmailEnter')}}><Text style = {styles.Login__SignUp}>Sign up</Text></TouchableOpacity>
 
       </View>
     
