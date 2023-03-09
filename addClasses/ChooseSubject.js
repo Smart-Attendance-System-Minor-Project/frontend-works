@@ -90,8 +90,11 @@ const ChooseSubject = ({navigation}) => {
         headers: { Authorization: `Bearer ${await AsyncStorage.getItem('token')}` }
       };
       
-
-      const response = await axios.post('https://wellattend.pythonanywhere.com/attendance/add_class/',newClass,config);
+      if(await AsyncStorage.getItem("connection") === "true")
+      {
+        const response = await axios.post('https://wellattend.pythonanywhere.com/attendance/add_class/',newClass,config);
+      }
+      
       
       const fileUri = FileSystem.documentDirectory + `${user}_classList.json`;
       try {
@@ -106,6 +109,7 @@ const ChooseSubject = ({navigation}) => {
             updatedClasses.push(PresentClasses[i]);
           }
         }
+        
         updatedClasses.push(classPrefix);
         await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(updatedClasses), { encoding: FileSystem.EncodingType.UTF8 });
         //AsyncStorage.setItem('classList',JSON.stringify(updatedClasses));      

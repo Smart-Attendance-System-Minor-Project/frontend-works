@@ -65,7 +65,7 @@ const Login = ({navigation,theme}) => {
                
            
              
-              dispatch(userData(await AsyncStorage.getItem('username')))
+              dispatch(userData(username))
               navigation.navigate('Home')
               setIsSecureEntry(true);
               dispatch(reset())
@@ -152,12 +152,17 @@ const Login = ({navigation,theme}) => {
             
         <TouchableOpacity onPress = {()=>{dispatch(reset());navigation.navigate('Register EmailEnter')}}><Text style = {styles.Login__SignUp}>Sign up</Text></TouchableOpacity>
 
+       
       </View>
-    
-   
+      
       <View style = {styles.Login__ChangeMode}>
             
-      </View>
+            <Image style = {styles.Login__DeepLearners} source={require('../pictures/Logos/deep_learners_cropped.png')}></Image>
+            
+        </View>
+    
+   
+      
      
     </View>
   )
@@ -179,7 +184,7 @@ const styles = StyleSheet.create({
     },
     Login__LogoContainer:{
 
-        marginTop:70,
+        marginTop:50,
     },
     Login__Logo:{
         resizeMode:'contain',
@@ -194,7 +199,7 @@ const styles = StyleSheet.create({
         borderColor: '#F73C3C',
     },
     Login__Form:{
-        marginTop:30,
+        marginTop:10,
         display:'flex',
         flexDirection:'column',
         alignItems:'center',
@@ -250,8 +255,19 @@ const styles = StyleSheet.create({
         marginBottom:18
     },
     Login__ChangeMode:{
-        bottom:-110,
+        position:'fixed',
+        bottom:-100,
+        display:'flex',
+        
+        alignItems:'center',
+        justifyContent:'center'
     },
+    Login__DeepLearners:{
+        resizeMode:'contain',
+        height:18,
+        marginTop:10,
+    }
+    ,
     Slider__bg:{
         backgroundColor:'#E8E8E8',
         height:25,

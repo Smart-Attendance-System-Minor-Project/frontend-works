@@ -1,4 +1,19 @@
 {
   "name": "FrontEnd_Attendance",
-  "displayName": "FrontEnd_Attendance"
+  "displayName": "FrontEnd_Attendance",
+   "expo": {
+      "ios": {
+        "infoPlist": {
+          "UIBackgroundModes": ["fetch"]
+        }
+      },
+      "plugins": [
+        [
+          "expo-notifications",
+          {
+            "sounds": ["./sounds/notification_sound.wav"]
+          }
+        ]
+      ]
+    }
 }

@@ -69,7 +69,8 @@ const ChooseClass = ({navigation}) => {
         
         </View>}
         {!isclass_ && <View style = {styles.No__Classes}>
-            <Text>No classes yet. Go and add classes.</Text>    
+            <Text style = {styles.NoClass_Text}>No Classes Created.</Text>
+            <Text style = {styles.NoClass_Text}>Create a class to start taking the attendance.</Text>    
         </View>}
       
     </ScrollView>
@@ -81,6 +82,21 @@ const styles = StyleSheet.create({
         marginTop:30,
         height:'100%'
     },
+
+    No__Classes:{
+        display:'flex',
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center',
+        height:'100%',
+        
+        
+    },
+    NoClass_Text:{
+        color:'#2c2c2c',
+        fontSize:20,
+        textAlign:'center'
+    }
   
     
 

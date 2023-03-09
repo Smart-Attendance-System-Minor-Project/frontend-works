@@ -121,7 +121,11 @@ const AttendanceScreen = ({navigation}) => {
         headers: { Authorization: `Bearer ${await AsyncStorage.getItem('token')}` }
       };
       
-      const response = await axios.post('https://wellattend.pythonanywhere.com/attendance/save_record/',AttendanceRecord,config);
+      if(await AsyncStorage.getItem("connection") === "true")
+      {
+        const response = await axios.post('https://wellattend.pythonanywhere.com/attendance/save_record/',AttendanceRecord,config);
+      }
+      
       // console.log(response);
       //Code upto here
 

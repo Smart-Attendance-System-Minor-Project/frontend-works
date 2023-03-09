@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet,TextInput,TouchableOpacity } from 'react-native'
+import { View, Text,StyleSheet,TextInput,TouchableOpacity,Image } from 'react-native'
 import React,{useState,useEffect} from 'react'
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,6 +24,7 @@ const RegisterEmailEnter = ({navigation,theme}) => {
 
   return (
     <View style = {styles.emailEnter__Container}>
+        <Image source={theme === 'light'?require('../../pictures/Logos/LOGO_WA_BGT_LIGHT.png'):require('../../pictures/Logos/LOGO_WA_BGT_DARK.png')} style = {styles.Login__Logo} /> 
       <Text style = {styles.email_EnterText}>Enter your "@pcampus.edu.np" Email ID</Text>
       <TextInput style = {styles.email__Enter} onChangeText={(e)=>{setEmail(e)}} placeholder="Email Address"></TextInput>
       <TouchableOpacity style = {styles.email__Verify} onPress = {handleEmail}>
@@ -34,13 +35,19 @@ const RegisterEmailEnter = ({navigation,theme}) => {
 }
 
 const styles = StyleSheet.create({
+  Login__Logo:{
+    resizeMode:'contain',
+    width:200
+    
+  },
+
     emailEnter__Container:{
 
         display:'flex',
         flexDirection:'column',
         alignItems:'center',
         justifyContent:'center',
-        marginTop:'50%'
+        marginTop:'20%'
       },
       email_EnterText:{
         fontSize:15,

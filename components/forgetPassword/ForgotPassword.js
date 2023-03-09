@@ -1,4 +1,4 @@
-import { View, Text,TextInput,StyleSheet, TouchableOpacity } from 'react-native'
+import { View, Text,TextInput,StyleSheet, TouchableOpacity,Image } from 'react-native'
 import React,{useEffect,useState} from 'react'
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -39,6 +39,7 @@ const ForgotPassword = ({navigation,theme}) => {
     }
   return (
     <View style = {styles.emailEnter__Container}>
+      <Image source={theme === 'light'?require('../../pictures/Logos/LOGO_WA_BGT_LIGHT.png'):require('../../pictures/Logos/LOGO_WA_BGT_DARK.png')} style = {styles.Login__Logo} /> 
       <Text style = {{color:'red'}}>{error}</Text>
      <Text style = {styles.email_EnterText}>Enter your email you used during registration.</Text>
      {/* <Text style = {styles.email__OTPtext}>A six-digit OTP will be sent to the email address you are registered with.</Text> */}
@@ -53,13 +54,17 @@ const ForgotPassword = ({navigation,theme}) => {
 }
 
 const styles = StyleSheet.create({
+  Login__Logo:{
+    resizeMode:'contain',
+    width:200
+  },
   emailEnter__Container:{
 
     display:'flex',
     flexDirection:'column',
     alignItems:'center',
     justifyContent:'center',
-    marginTop:'30%'
+    marginTop:'20%'
   },
   email_EnterText:{
     fontSize:15,

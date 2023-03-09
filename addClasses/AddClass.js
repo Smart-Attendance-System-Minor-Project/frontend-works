@@ -1,4 +1,4 @@
-import { View, Text,StyleSheet,TouchableOpacity,Appearance } from 'react-native'
+import { View, Text,StyleSheet,TouchableOpacity,Appearance,Image } from 'react-native'
 import React,{useState, useEffect} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { addClass,reset } from '../redux/reducers/addClassSlice';
@@ -79,8 +79,10 @@ const AddClass = ({navigation}) => {
   
   return (
     <View style = {[styles.AddClass__Container,theme=== 'light'?{backgroundColor:''}:{backgroundColor:'#212121'}]}>
+      <Image source = {require('../pictures/Logos/tu_Logo.png')} style = {styles.TU__Logo}></Image>
       <LoadingIndicator visible = {isLoading}/>
       { <View style = {styles.AddClass__Section1}>
+            <Text style = {styles.Guide__addClass}>Choose the fields to get the list of subjects</Text>
            <SelectDropdown
               data={Programs}
               onSelect={(selectedItem, index) => {
@@ -157,15 +159,18 @@ const AddClass = ({navigation}) => {
 const styles = StyleSheet.create({
     AddClass__Container:{
         padding:20,
-        
-        height:'100%'
+        height:'100%',
+        display:'flex',
+        flexDirection:'column',
+        marginTop:30,
+        alignItems:"center"
 
     },
     AddClass__Section1:{
       display:'flex',
       flexDirection:'column',
       alignItems:'center',
-      marginTop:120
+      marginTop:60
     
     },  
     selection_contains:{
@@ -174,7 +179,14 @@ const styles = StyleSheet.create({
      backgroundColor:'#fff'
       
     },
+    Guide__addClass:{
+      marginBottom:60,
+    },
   
+    TU__Logo:{
+      resizeMode:'contain',
+      height:80
+    },
     ClassSelection__ButtonGetSubject:{
       backgroundColor:'#29B0DB',
       height:60,
@@ -197,7 +209,7 @@ const styles = StyleSheet.create({
         alignItems:'center',
         justifyContent:'center',
         position:'relative',
-        bottom:-200,
+        bottom:-150,
         width:'100%',
         
        },
