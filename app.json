@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "my-app",
+    "name": "WellAttend",
     "slug": "my-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -15,16 +15,28 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "UIBackgroundModes": ["fetch"]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.rajesh12.wellattend"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3d405a19-dd85-4ec7-b4e5-4fbdad962c38"
+      }
     }
   }
 }
